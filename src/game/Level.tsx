@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Enemy } from "../actors/Enemy";
 import { Player } from "../actors/Player";
 import { Map } from "../map/Map";
 import { inputManager } from "../utils/InputManager";
@@ -24,6 +25,9 @@ export const Level = () => {
     // add player to game
     const player = new Player(32, 32);
     state.instance.add(player);
+
+    const enemy = new Enemy(64, 64);
+    state.instance.add(enemy);
 
     state.instance.currentScene.camera.strategy.elasticToActor(
       player,

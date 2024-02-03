@@ -1,4 +1,12 @@
-import { Actor, CollisionType, Color, Engine, Shape, Vector } from "excalibur";
+import {
+  Actor,
+  CollisionType,
+  Color,
+  Engine,
+  Shape,
+  Text,
+  Vector,
+} from "excalibur";
 import { SCALE_VEC } from "../utils/Constants";
 import { Direction, inputManager } from "../utils/InputManager";
 import { characterAnimations } from "./Animations";
@@ -13,6 +21,7 @@ const SPEED_DOWN = new Vector(0, 1);
 export class Player extends Actor {
   moving = false;
   action = "idle";
+  nameUi: Text | null = null;
   constructor(x: number, y: number) {
     super({
       x: x,
@@ -24,7 +33,15 @@ export class Player extends Actor {
       collisionType: CollisionType.Active,
       color: Color.Violet,
     });
+
     this.graphics.use(characterAnimations.idle.down);
+
+    this.nameUi = new Text({
+      text: "Player",
+      color: Color.White,
+      height: 32,
+      width: 54,
+    });
   }
   onPreUpdate(engine: Engine, delta: number): void {
     var vel = SPEED_IDLE.clone();
@@ -42,6 +59,9 @@ export class Player extends Actor {
     }
     const moving = vel.x !== 0 || vel.y !== 0;
     this.vel = moving ? vel.normalize().scale(SPEED * delta) : vel;
+
+    this.nameUi?.transform.setPosition(this.pos.x, this.pos.y);
+
     this.action = moving ? "walk" : "idle";
     this.handleAnimation();
   }
