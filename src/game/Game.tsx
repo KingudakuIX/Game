@@ -4,6 +4,7 @@ import {
   PointerScope,
   ScrollPreventionMode,
 } from "excalibur";
+import { TAG_PLAYER } from "../utils/Constants";
 
 interface State {
   instance: Engine | null;
@@ -25,7 +26,13 @@ export const SetupGameCanvas = () => {
     antialiasing: false,
   });
 
+  game.onPreUpdate = onPreUpdate;
+
   state.instance = game;
 
   return true;
 };
+
+const onPreUpdate = (engine: Engine, delta: number) => {
+  engine.currentScene.world.queryManager.getQuery([TAG_PLAYER]);
+}

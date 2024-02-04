@@ -32,7 +32,7 @@ export class InputManager {
   };
   directionsStack: string[] = [];
   lastDirection: string = "";
-  constructor() {}
+  constructor() { }
   enable() {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
       this.onKeyDown(e.key);
@@ -54,6 +54,7 @@ export class InputManager {
     }
   }
   onKeyDown(key: string) {
+    // engine.input.keyboard.isHeld(ex.Input.Keys.ArrowRight)
     if (directionalKeys.includes(key)) {
       const direction = getDirectionFromKey(key);
       if (!this.inputs.directions[direction.toString()]) {
@@ -72,9 +73,6 @@ export class InputManager {
       this.directionsStack = this.directionsStack.filter(
         (x) => x !== direction
       );
-      console.log(this.lastDirection);
-      console.log(direction);
-      console.log(this.directionsStack);
       if (this.lastDirection === direction) {
         this.lastDirection =
           this.directionsStack.length > 0
