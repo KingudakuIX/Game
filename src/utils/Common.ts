@@ -1,4 +1,4 @@
-import { Animation } from "excalibur";
+import { Animation, SpriteSheet } from "excalibur";
 
 export interface AnimationData {
   [action: string]: {
@@ -6,7 +6,7 @@ export interface AnimationData {
   } | Animation;
 }
 
-interface Frame {
+export interface Frame {
   x: number;
   y: number;
   duration: number;
@@ -35,6 +35,17 @@ export const generateFramesCoordinates = (
   return frames;
 };
 
+export const generateAnimationsFromFramesCoordinates = (spriteSheet: SpriteSheet, frameCoordinates: Frame[]) => {
+  const animations: Animation[] = [];
+  for (const frameCoordinate of frameCoordinates) {
+    animations.push(Animation.fromSpriteSheetCoordinates({
+      spriteSheet: spriteSheet,
+      frameCoordinates: [frameCoordinate],
+    }));
+  }
+  return animations;
+}
+
 export const guid = () => {
   const S4 = function () {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -54,3 +65,5 @@ export const guid = () => {
     S4()
   );
 };
+
+export const DYING = "dying";

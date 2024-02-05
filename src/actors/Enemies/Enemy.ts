@@ -1,4 +1,4 @@
-import { Actor, Engine, ImageSource, Vector } from "excalibur";
+import { Actor, Engine, ImageSource, Keys, Vector } from "excalibur";
 import { Label } from "../Label";
 import { Npc } from "../Npc";
 import { HealthBar } from "../ui/HealhBar";
@@ -22,6 +22,8 @@ export class Enemy extends Npc {
   hp: number;
   areaGuid = "";
   target: Actor | null = null;
+  healthbar: HealthBar | null = null;
+
   constructor({ x, y, imageSource, name, hp }: EnemyProps) {
     super(
       x,
@@ -37,17 +39,30 @@ export class Enemy extends Npc {
 
     const healthbar = new HealthBar(hp);
     this.addChild(healthbar);
+    this.healthbar = healthbar;
   }
+
   onPreUpdate(engine: Engine, delta: number) {
+    super.onPreUpdate(engine, delta);
+
     if (this.target) {
       this.onPreUpdateMoveTowardsTarget();
     } else {
       // this.onPreUpdateMoveTowardsRoamingPoint();
     }
 
+    // TEST
+    if (engine.input.keyboard.wasPressed(Keys.L)) {
+      console.log("enter here?")
+      this.hp -= 1;
+      if (this.healthbar) this.healthbar.onUpdate(this.hp);
+      if (this.hp === 0) { this.handleDying(); console.log("Enemy die") }
+    }
+
     // Show correct appearance
     this.handleAnimation();
   }
+
   onPreUpdateMoveTowardsTarget() {
     if (!this.target) return;
     // Move towards the point if far enough away

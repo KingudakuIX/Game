@@ -11,3 +11,5 @@ export const TAG_PLAYER = "TAG_PLAYER";
 export const TAG_NPC = "TAG_NPC";
 
 export const FPS = 6;
+
+export const SPEED_IDLE = new Vector(0, 0);

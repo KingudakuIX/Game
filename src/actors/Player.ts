@@ -1,15 +1,13 @@
 import {
-  Actor,
-  CollisionType,
-  Color,
   Engine,
-  Shape,
-  Text,
-  Vector,
+  Keys,
+  Vector
 } from "excalibur";
-import { FPS, SCALE_VEC, TAG_PLAYER } from "../utils/Constants";
+import { images } from "../game/Resources";
+import { FPS, TAG_PLAYER } from "../utils/Constants";
 import { Direction, inputManager } from "../utils/InputManager";
 import { characterAnimations } from "./Animations";
+import { BaseCharacter } from "./BaseCharacter";
 import { Label } from "./Label";
 import { HealthBar } from "./ui/HealhBar";
 
@@ -19,23 +17,17 @@ const SPEED_RIGHT = new Vector(1, 0);
 const SPEED_LEFT = new Vector(-1, 0);
 const SPEED_UP = new Vector(0, -1);
 const SPEED_DOWN = new Vector(0, 1);
-
-export class Player extends Actor {
+export class Player extends BaseCharacter {
   moving = false;
-  action = "idle";
-  nameUi: Text | null = null;
   hp = 10;
+  healthbar: HealthBar | null = null;
+
   constructor(x: number, y: number) {
-    super({
-      x: x,
-      y: y,
-      width: 16,
-      height: 16,
-      collider: Shape.Box(16, 16),
-      scale: SCALE_VEC,
-      collisionType: CollisionType.Active,
-      color: Color.Violet,
-    });
+    super(
+      x,
+      y,
+      images.character_01,
+    );
 
     this.addTag(TAG_PLAYER);
 
@@ -46,12 +38,33 @@ export class Player extends Actor {
 
     const label = new Label("Player");
     label.pos.y = -30;
+    label.z = this.z + 1;
     this.addChild(label);
 
     const healthbar = new HealthBar(this.hp);
+    healthbar.z = this.z + 1;
     this.addChild(healthbar);
+    this.healthbar = healthbar;
   }
+
   onPreUpdate(engine: Engine, delta: number): void {
+    super.onPreUpdate(engine, delta);
+
+    this.handleInputs(engine, delta);
+
+    if (!this.isDying) {
+      this.setAction(this.moving ? "walk" : "idle");
+      if (inputManager.lastDirection) {
+        this.setDirection(inputManager.lastDirection as Direction);
+      }
+    }
+
+    this.handleAnimation();
+  }
+
+  handleInputs(engine: Engine, delta: number) {
+    if (this.isDying) return;
+
     var vel = SPEED_IDLE.clone();
     if (inputManager.inputs.directions[Direction.up]) {
       vel.addEqual(SPEED_UP);
@@ -68,18 +81,18 @@ export class Player extends Actor {
     const moving = vel.x !== 0 || vel.y !== 0;
     this.vel = moving ? vel.normalize().scale(SPEED * Math.floor(delta / FPS)) : vel;
 
-    this.nameUi?.transform.setPosition(this.pos.x, this.pos.y);
+    this.moving = moving;
 
-    this.action = moving ? "walk" : "idle";
-    this.handleAnimation();
-  }
-  handleAnimation() {
-    if (inputManager.lastDirection) {
-      // console.log(characterAnimations[this.action][inputManager.lastDirection]);
-      this.graphics.use(
-        // @ts-ignore
-        characterAnimations[this.action][inputManager.lastDirection]
-      );
+    // TEST
+    if (engine.input.keyboard.wasPressed(Keys.P)) {
+      console.log("enter here?")
+      this.hp -= 1;
+      if (this.healthbar) this.healthbar.onUpdate(this.hp);
+      if (this.hp === 0) this.handleDying();
     }
   }
+
+  // handleAnimation() {
+  //   super.handleAnimation();
+  // }
 }

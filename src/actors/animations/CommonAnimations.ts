@@ -61,12 +61,23 @@ export const getCharacterAnimation = (imageSource: ImageSource) => {
         ),
       }),
     },
-    die: Animation.fromSpriteSheetCoordinates({
-      spriteSheet: characterSpriteSheet,
-      frameCoordinates: generateFramesCoordinates("horizontal", 8, [0, 7], 100),
-    }),
+    // die_start: Animation.fromSpriteSheetCoordinates({
+    //   spriteSheet: characterSpriteSheet,
+    //   frameCoordinates: generateFramesCoordinates("horizontal", 20, [0, 6], 300),
+    // }),
+    // die_end: Animation.fromSpriteSheetCoordinates({
+    //   spriteSheet: characterSpriteSheet,
+    //   frameCoordinates: generateFramesCoordinates("horizontal", 20, [5, 6], 300),
+    // }),
   };
 
-  // Retrun previously generated animations
-  return characterAnimations;
+  // Return previously generated animations
+  return { characterSpriteSheet, characterAnimations };
+}
+
+export const animationsFrames = {
+  dying: generateFramesCoordinates("horizontal", 20, [0, 6], 300),
+  // dying: [
+  //   Animation.fromSpriteSheetCoordinates({ spriteSheet: characterSpriteSheet, frameCoordinates: generateFramesCoordinates("horizontal", 20, [5, 6], 300), }),
+  // ]
 }

@@ -28,7 +28,6 @@ export const Level = () => {
     const player = new Player(32, 32);
     state.instance.add(player);
 
-
     const enemy = new Enemy({ x: 64, y: 64, imageSource: images.character_02, name: "Bruto", hp: 10 });
 
     const enemyArea = new EnemyArea({ enemies: [enemy] });
@@ -46,9 +45,7 @@ export const Level = () => {
     );
 
     state.instance.onPreDraw = () => {
-      // if(player.pos.y > enemy.pos.y) {
       enemy.checkForZIndex(player.pos);
-      // }
     }
 
     // start the game
