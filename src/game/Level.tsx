@@ -1,7 +1,5 @@
-import { Color } from "excalibur";
 import { useEffect } from "react";
 import { Blunt } from "../actors/Enemies/Blunt/Blunt";
-import { EnemyArea, EnemyAreaGroup } from "../actors/Enemies/EnemyArea";
 import { Player } from "../actors/Player";
 import { Map } from "../map/Map";
 import { TAG_NPC, TAG_PLAYER } from "../utils/Constants";
@@ -29,24 +27,27 @@ export const Level = () => {
     const player = new Player(32, 32);
     state.instance.add(player);
 
-    const enemy = new Blunt({ x: 64, y: 64, imageSource: images.character_02, name: "Bruto", hp: 10 });
-    // const enemy2 = new Blunt({ x: 164, y: 164, imageSource: images.character_02, name: "Bruto ferito", hp: 6 });
-    // const enemy3 = new Blunt({ x: 264, y: 264, imageSource: images.character_02, name: "Bruto cattivo", hp: 10 });
+    const enemy = new Blunt({ x: 364, y: 364, imageSource: images.character_02, name: "Bruto", hp: 10 });
+    enemy.target = player;
+    const enemy2 = new Blunt({ x: -364, y: 164, imageSource: images.character_02, name: "Bruto ferito", hp: 6 });
+    const enemy3 = new Blunt({ x: 264, y: 264, imageSource: images.character_02, name: "Bruto cattivo", hp: 10 });
+    enemy2.target = player;
+    enemy3.target = player;
 
-    const enemyAreaInner = new EnemyArea({ radius: 100, color: Color.Orange });
+    // const enemyAreaInner = new EnemyArea({ radius: 100, color: Color.Orange });
 
-    const enemyAreaOuter = new EnemyArea({ radius: 200 });
+    // const enemyAreaOuter = new EnemyArea({ radius: 200 });
 
-    new EnemyAreaGroup({
-      enemies: [enemy],
-      // enemies: [enemy, enemy2, enemy3],
-      inner: enemyAreaInner,
-      outer: enemyAreaOuter,
-    })
+    // new EnemyAreaGroup({
+    //   enemies: [enemy],
+    //   // enemies: [enemy, enemy2, enemy3],
+    //   inner: enemyAreaInner,
+    //   outer: enemyAreaOuter,
+    // })
 
     state.instance.add(enemy);
-    // state.instance.add(enemy2);
-    // state.instance.add(enemy3);
+    state.instance.add(enemy2);
+    state.instance.add(enemy3);
 
     state.instance.currentScene.world.queryManager.createQuery([TAG_PLAYER]);
     state.instance.currentScene.world.queryManager.createQuery([TAG_NPC]);

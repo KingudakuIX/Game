@@ -3,12 +3,15 @@ import {
   Keys
 } from "excalibur";
 import { images } from "../game/Resources";
-import { FPS, SPEED_DOWN, SPEED_IDLE, SPEED_LEFT, SPEED_RIGHT, SPEED_UP, TAG_PLAYER } from "../utils/Constants";
+import { FPS, SPEED_DOWN, SPEED_IDLE, SPEED_LEFT, SPEED_RIGHT, SPEED_UP, TAG_ENEMY, TAG_PLAYER } from "../utils/Constants";
 import { Direction, inputManager } from "../utils/InputManager";
 import { characterAnimations } from "./Animations";
 import { BaseCharacter } from "./BaseCharacter";
 import { Label } from "./Label";
 import { deathBehaviour } from "./behaviour/DeathBehaviour";
+import { playerSkillsBehaviour } from "./behaviour/PlayerSkillBehaviour";
+import { ProjectileProps } from "./effects/Projectile";
+import { getCastSkill } from "./skills/castAttackSkill";
 import { HealthBar } from "./ui/HealhBar";
 
 const SPEED = 120;
@@ -24,6 +27,10 @@ export class Player extends BaseCharacter {
       y,
       images.character_01,
     );
+  }
+
+  onInitialize(engine: Engine): void {
+    super.onInitialize(engine);
 
     this.addTag(TAG_PLAYER);
 
@@ -33,6 +40,31 @@ export class Player extends BaseCharacter {
     this.graphics.use(characterAnimations.idle.down);
 
     this.behaviours.push(deathBehaviour());
+    this.behaviours.push(playerSkillsBehaviour());
+
+    const fireBall: ProjectileProps = {
+      imageSource: images.flame_01,
+      initialPos: 8,
+      range: [0, 6],
+      frameDuration: 100,
+      grid: {
+        columns: 9,
+        rows: 30,
+        spriteWidth: 64,
+        spriteHeight: 64,
+      },
+      x: 0,
+      y: 0,
+      width: 64,
+      height: 64,
+      damage: 2,
+      speed: 200,
+      hitTag: [TAG_ENEMY],
+    }
+    const skill = getCastSkill(this.imageSource, fireBall);
+    skill.key = "Num1"
+
+    this.skills.push(skill);
 
     const label = new Label("Player");
     label.pos.y = -30;
@@ -86,12 +118,26 @@ export class Player extends BaseCharacter {
     // TEST
     if (engine.input.keyboard.wasPressed(Keys.P)) {
       this.hp -= 1;
-      // if (this.healthbar) this.healthbar.onUpdate(this.hp);
-      // if (this.hp === 0) this.handleDying();
     }
+    // const skill = this.skills.find((skill) => skill.key === "Num1");
+    // if (engine.input.keyboard.wasPressed(Keys.Num1)) {
+    //   console.log("Button 1 - pressed");
+    //   if (skill) skill.execute = true;
+    // } else {
+    //   if (skill) skill.execute = false;
+    // }
   }
 
-  handleTakeDamage(damage: number) {
+  async handleTakeDamage(damage: number) {
     this.hp -= damage;
+
+    this.isPain = true;
+    await this.actions.delay(150).toPromise();
+    this.isPain = false;
+
+    // const {characterAnimations} =getCharacterAnimation(this.imageSource);
+    // this.animations = characterAnimations;
+    // this.graphics.ù
+    // this.actions.blink(150, 75, 1);
   }
 }

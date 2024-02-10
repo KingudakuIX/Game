@@ -6,7 +6,7 @@ import { Direction } from "../../../utils/InputManager";
 import { BaseEffect } from "../../effects/BaseEffect";
 import { ExtendedActor } from "../../misc/Behaviour";
 
-export const getMaceAnimation = (imageSource: ImageSource, frameCount: number, grid: Grid) => {
+export const getFireballAnimation = (imageSource: ImageSource, frameCount: number, grid: Grid) => {
   const animationSpriteSheet = SpriteSheet.fromImageSource({
     image: imageSource,
     grid: grid

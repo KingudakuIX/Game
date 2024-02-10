@@ -1,4 +1,4 @@
-import { Actor } from "excalibur";
+import { Actor, Engine } from "excalibur";
 
 export interface ExtendedActor extends Actor {
   [key: string]: any
@@ -7,7 +7,7 @@ export interface ExtendedActor extends Actor {
 interface IBehaviour {
   condition: (actor: ExtendedActor) => boolean,
   enterCallback?: (actor: ExtendedActor, delta: number) => void,
-  callback: (actor: ExtendedActor, delta: number) => void,
+  callback: (actor: ExtendedActor, engine: Engine, delta: number) => void,
   exitCallback?: (actor: ExtendedActor, delta: number) => void,
 }
 
@@ -24,7 +24,7 @@ export class Behaviour implements IBehaviour {
 
   condition: (actor: ExtendedActor) => boolean;
 
-  callback: (actor: ExtendedActor, delta: number) => void;
+  callback: (actor: ExtendedActor, engine: Engine, delta: number) => void;
 
   enterCallback(actor: ExtendedActor, delta: number) {
     this.running = true;

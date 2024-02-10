@@ -2,6 +2,8 @@ import { SpriteSequence } from "../animations/SpriteSequence";
 import { Behaviour, ExtendedActor } from "../misc/Behaviour";
 
 export interface Skill {
+  key?: string,
+  execute?: boolean,
   isOnCooldown: boolean,
   cooldownProgress: number,
   cooldown: number,
@@ -14,7 +16,7 @@ export const skillsBehaviour = () => {
     condition: (actor) => {
       return !actor.isDying && actor.target;
     },
-    callback: (actor, delta) => {
+    callback: (actor, _, delta) => {
       if (!actor.actionAnimation) {
         // Loop through the actor skills to seek for one...
         var currentSkill: Skill | any = null;

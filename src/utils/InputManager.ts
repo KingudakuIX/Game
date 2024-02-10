@@ -43,10 +43,10 @@ export class InputManager {
   }
   disable() {
     window.removeEventListener("keydown", (e: KeyboardEvent) => {
-      this.onKeyDown(e.key);
+      this.onKeyDown(e.key.toLowerCase());
     });
     window.removeEventListener("keyup", (e: KeyboardEvent) => {
-      this.onKeyUp(e.key);
+      this.onKeyUp(e.key.toLowerCase());
     });
     // Stop all inputs:
     for (const direction in this.inputs.directions) {

@@ -23,7 +23,7 @@ export const generateFramesCoordinates = (
   direction: "horizontal" | "vertical",
   initialPos: number,
   range: number[],
-  duration: number
+  duration: number | number[]
 ) => {
   const from = range[0];
   const to = range[1];
@@ -36,7 +36,7 @@ export const generateFramesCoordinates = (
     frames.push({
       x: direction === "horizontal" ? from + i : initialPos,
       y: direction === "vertical" ? from + i : initialPos,
-      duration: duration,
+      duration: Array.isArray(duration) ? duration[i] : duration,
     });
   }
   return frames;

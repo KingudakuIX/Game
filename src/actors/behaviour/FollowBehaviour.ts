@@ -7,7 +7,7 @@ export const followBehaviour = () => {
     condition: (actor) => {
       return !actor.isDying && actor.actionAnimation === null && actor.target !== null;
     },
-    callback: (actor, delta) => {
+    callback: (actor, _, delta) => {
       followTarget(actor, delta);
       faceTarget(actor);
     },

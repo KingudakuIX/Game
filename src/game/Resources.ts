@@ -6,6 +6,7 @@ const images = {
   character_02: new ImageSource("/enemy.png"),
 
   impact_01: new ImageSource("/impact.png"),
+  flame_01: new ImageSource("/flame.png"),
 
   heart: new ImageSource("/heart.png"),
   health: new ImageSource("/health_segments.png"),

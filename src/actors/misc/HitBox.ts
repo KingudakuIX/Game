@@ -1,4 +1,6 @@
-import { Actor, Collider, CollisionContact, Color, Side } from "excalibur";
+import { Actor, Collider, CollisionContact, Color, Engine, Side } from "excalibur";
+import { DEBUG } from "../../utils/Constants";
+import { Collision } from "./Collision";
 
 export interface HitBoxProps {
   x: number,
@@ -10,9 +12,14 @@ export interface HitBoxProps {
   damage: number;
 }
 
+const _DEBUG = true;
+
+const DEBUG_HITBOX = _DEBUG && DEBUG;
+
 export class HitBox extends Actor {
   damage: number;
   hitTag: string[] = [];
+  radius?: number;
   constructor({ x, y, width, height, radius, hitTag, damage }: HitBoxProps) {
     super({
       x: x,
@@ -22,9 +29,24 @@ export class HitBox extends Actor {
       height: height,
       radius: radius,
     });
-    // this.graphics.opacity = DEBUG ? 0.5 : 0;
     this.hitTag = hitTag;
     this.damage = damage;
+    this.radius = radius;
+  }
+  onInitialize(engine: Engine): void {
+    if (DEBUG_HITBOX) {
+      console.log("width", this.width)
+      console.log("height", this.height)
+      const collision = new Collision({
+        x: this.pos.x,
+        y: this.pos.y,
+        width: this.width,
+        height: this.height,
+        radius: this.radius,
+      });
+      collision.z = this.z + 1;
+      this.addChild(collision);
+    }
   }
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
     if (other.owner.tags.some(tag => this.hitTag?.includes(tag))) {

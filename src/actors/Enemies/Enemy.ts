@@ -1,4 +1,5 @@
 import { Actor, Engine, ImageSource, Keys } from "excalibur";
+import { TAG_ENEMY } from "../../utils/Constants";
 import { Label } from "../Label";
 import { Npc } from "../Npc";
 import { deathBehaviour } from "../behaviour/DeathBehaviour";
@@ -30,21 +31,31 @@ export class Enemy extends Npc {
 
     this.hp = hp;
 
+    this.characterName = name;
+  }
+
+  onInitialize(engine: Engine): void {
+    super.onInitialize(engine);
+
+    this.addTag(TAG_ENEMY);
+
     this.behaviours.push(deathBehaviour());
     this.behaviours.push(followBehaviour());
     this.behaviours.push(skillsBehaviour());
 
-    const label = new Label(name);
+    const label = new Label(this.characterName);
     label.pos.y = -30;
     this.addChild(label);
 
-    const healthbar = new HealthBar(hp);
+    const healthbar = new HealthBar(this.hp);
     this.addChild(healthbar);
     this.healthbar = healthbar;
   }
 
   onPreUpdate(engine: Engine, delta: number) {
     super.onPreUpdate(engine, delta);
+
+    if (this.healthbar) this.healthbar.onUpdate(this.hp);
 
     if (this.isDying) return;
 
@@ -53,7 +64,6 @@ export class Enemy extends Npc {
     // TEST
     if (engine.input.keyboard.wasPressed(Keys.L)) {
       this.hp -= 1;
-      if (this.healthbar) this.healthbar.onUpdate(this.hp);
     }
 
     // Show correct appearance
@@ -68,5 +78,14 @@ export class Enemy extends Npc {
     if (distance <= 40) {
 
     }
+  }
+
+  async handleTakeDamage(damage: number) {
+    console.log("enemy take damage")
+    this.hp -= damage;
+
+    this.isPain = true;
+    await this.actions.delay(150).toPromise();
+    this.isPain = false;
   }
 }

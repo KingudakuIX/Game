@@ -1,5 +1,4 @@
 import { Actor, CollisionType, Color, Engine, ImageSource, Shape, SpriteSheet, Vector } from "excalibur";
-import { state } from "../game/Game";
 import { AnimationData } from "../utils/Common";
 import { DEBUG, SCALE_VEC, SPEED_IDLE } from "../utils/Constants";
 import { Direction } from "../utils/InputManager";
@@ -15,14 +14,17 @@ const DEBUG_CHARACTER = _DEBUG && DEBUG;
 
 export class BaseCharacter extends Actor {
   isDying = false;
+  isPain = false;
   action = "idle";
   direction = Direction.down;
-  spriteSheet: SpriteSheet;
-  animations: AnimationData;
+  spriteSheet: SpriteSheet | null = null;
+  animations: AnimationData | null = null;
   actionAnimation: SpriteSequence<any> | null = null;
   collision: Collision | null = null;
   behaviours: Behaviour[] = [];
   skills: Skill[] = [];
+  characterName = "";
+  imageSource: ImageSource;
 
   constructor(x: number, y: number, imageSource: ImageSource) {
     super({
@@ -34,18 +36,26 @@ export class BaseCharacter extends Actor {
       color: Color.Violet,
     });
 
-    const { characterSpriteSheet, characterAnimations } = getCharacterAnimation(imageSource);
+    this.imageSource = imageSource;
+  }
+
+  onInitialize(engine: Engine): void {
+    const { characterSpriteSheet, characterAnimations } = getCharacterAnimation(this.imageSource);
     this.spriteSheet = characterSpriteSheet;
     this.animations = characterAnimations;
 
     // @ts-ignore
     this.graphics.use(this.animations.idle.down);
 
+    this.graphics.onPreDraw = async (ctx, delta) => {
+      ctx.tint = this.isPain ? Color.Red : Color.White;
+    }
+
     if (DEBUG_CHARACTER) {
-      const collision = new Collision(x, y, new Vector(0, 8));
-      collision.z = 200;
-      state.instance?.add(collision);
-      this.collision = collision;
+      // const collision = new Collision(this.pos.x, this.pos.y, new Vector(0, 8));
+      // collision.z = 200;
+      // state.instance?.add(collision);
+      // this.collision = collision;
     }
   }
 
@@ -57,7 +67,7 @@ export class BaseCharacter extends Actor {
     this.behaviours.forEach((behaviour) => {
       if (behaviour.condition(this)) {
         if (!behaviour.running) behaviour.enterCallback(this, delta);
-        behaviour.callback(this, delta);
+        behaviour.callback(this, engine, delta);
       }
       else if (behaviour.running && behaviour.exitCallback) {
         behaviour.exitCallback(this, delta);
@@ -70,7 +80,6 @@ export class BaseCharacter extends Actor {
   }
 
   handleAnimation() {
-    // console.log("animation", this.action, this.direction);    
     if (!this.isDying && !this.actionAnimation) {
       // @ts-ignore
       const animation = this.animations[this.action][this.direction] ?? this.animations[this.action];
