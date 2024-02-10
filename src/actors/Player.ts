@@ -1,10 +1,9 @@
 import {
   Engine,
-  Keys,
-  Vector
+  Keys
 } from "excalibur";
 import { images } from "../game/Resources";
-import { FPS, TAG_PLAYER } from "../utils/Constants";
+import { FPS, SPEED_DOWN, SPEED_IDLE, SPEED_LEFT, SPEED_RIGHT, SPEED_UP, TAG_PLAYER } from "../utils/Constants";
 import { Direction, inputManager } from "../utils/InputManager";
 import { characterAnimations } from "./Animations";
 import { BaseCharacter } from "./BaseCharacter";
@@ -12,11 +11,7 @@ import { Label } from "./Label";
 import { HealthBar } from "./ui/HealhBar";
 
 const SPEED = 120;
-const SPEED_IDLE = new Vector(0, 0);
-const SPEED_RIGHT = new Vector(1, 0);
-const SPEED_LEFT = new Vector(-1, 0);
-const SPEED_UP = new Vector(0, -1);
-const SPEED_DOWN = new Vector(0, 1);
+
 export class Player extends BaseCharacter {
   moving = false;
   hp = 10;
@@ -85,14 +80,9 @@ export class Player extends BaseCharacter {
 
     // TEST
     if (engine.input.keyboard.wasPressed(Keys.P)) {
-      console.log("enter here?")
       this.hp -= 1;
       if (this.healthbar) this.healthbar.onUpdate(this.hp);
       if (this.hp === 0) this.handleDying();
     }
   }
-
-  // handleAnimation() {
-  //   super.handleAnimation();
-  // }
 }

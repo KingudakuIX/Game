@@ -1,9 +1,11 @@
-import { Actor, CollisionType, Color, Engine, ImageSource, Shape, SpriteSheet } from "excalibur";
+import { Actor, CollisionType, Color, Engine, ImageSource, Shape, SpriteSheet, Vector } from "excalibur";
+import { state } from "../game/Game";
 import { AnimationData, DYING, generateAnimationsFromFramesCoordinates } from "../utils/Common";
-import { SCALE_VEC, SPEED_IDLE } from "../utils/Constants";
+import { DEBUG, SCALE_VEC, SPEED_IDLE } from "../utils/Constants";
 import { Direction } from "../utils/InputManager";
 import { animationsFrames, getCharacterAnimation } from "./animations/CommonAnimations";
 import { SpriteSequence } from "./animations/SpriteSequence";
+import { Collision } from "./misc/Collision";
 
 // const SPEED = 6;
 // const SPEED_IDLE = new Vector(0, 0);
@@ -19,13 +21,12 @@ export class BaseCharacter extends Actor {
   spriteSheet: SpriteSheet;
   animations: AnimationData;
   actionAnimation: SpriteSequence<any> | null = null;
+  collision: Collision | null = null;
   constructor(x: number, y: number, imageSource: ImageSource) {
     super({
       x: x,
       y: y,
-      width: 16,
-      height: 16,
-      collider: Shape.Box(16, 16),
+      collider: Shape.Box(16, 16, undefined, new Vector(0, 8)),
       scale: SCALE_VEC,
       collisionType: CollisionType.Active,
       color: Color.Violet,
@@ -37,11 +38,22 @@ export class BaseCharacter extends Actor {
 
     // @ts-ignore
     this.graphics.use(this.animations.idle.down);
+
+    if (DEBUG) {
+      const collision = new Collision(x, y, new Vector(0, 8));
+      collision.z = 200;
+      state.instance?.add(collision);
+      this.collision = collision;
+    }
   }
 
   onPreUpdate(engine: Engine, delta: number): void {
     this.progressThroughActionAnimation(delta);
     this.handleAnimation();
+
+    if (DEBUG && this.collision) {
+      this.collision.parentPos = this.pos.clone();
+    }
   }
 
   handleAnimation() {

@@ -1,4 +1,4 @@
-import { Actor, Collider, CollisionContact, Color, Side } from "excalibur";
+import { Actor, Collider, CollisionContact, Color, Shape, Side } from "excalibur";
 import { TAG_PLAYER } from "../../utils/Constants";
 import { Enemy } from "./Enemy";
 
@@ -12,9 +12,11 @@ export class EnemyArea extends Actor {
     super({
       x: 244,
       y: 244,
-      width: 200,
-      height: 200,
+      // width: 200,
+      // height: 200,
+      radius: 200,
       color: Color.Blue,
+      collider: Shape.Circle(200),
     });
 
     this.enemies = enemies;
@@ -24,7 +26,6 @@ export class EnemyArea extends Actor {
     // });
   }
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
-    console.log("collision start fired")
     if (other.owner.hasTag(TAG_PLAYER)) {
       console.log("Start follow player")
       this.enemies.forEach(enemy => {
@@ -40,5 +41,19 @@ export class EnemyArea extends Actor {
     // else {
     //   this.events.emit(`UNFOLLOW_PLAYER_${this.guid}`);
     // }
+  }
+  onCollisionEnd(self: Collider, other: Collider): void {
+    if (other.owner.hasTag(TAG_PLAYER)) {
+      console.log("Stop following player")
+      this.enemies.forEach(enemy => {
+        // @ts-ignore
+        enemy.target = null;
+      })
+      // if (evt.other.isUsed) {
+      //   return;
+      // }
+      // evt.other.onDamagedSomething();
+      // this.takeDamage(evt.other.direction);
+    }
   }
 }
