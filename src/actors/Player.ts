@@ -8,6 +8,7 @@ import { Direction, inputManager } from "../utils/InputManager";
 import { characterAnimations } from "./Animations";
 import { BaseCharacter } from "./BaseCharacter";
 import { Label } from "./Label";
+import { deathBehaviour } from "./behaviour/DeathBehaviour";
 import { HealthBar } from "./ui/HealhBar";
 
 const SPEED = 120;
@@ -30,6 +31,8 @@ export class Player extends BaseCharacter {
 
     // @ts-ignore
     this.graphics.use(characterAnimations.idle.down);
+
+    this.behaviours.push(deathBehaviour());
 
     const label = new Label("Player");
     label.pos.y = -30;
@@ -55,6 +58,8 @@ export class Player extends BaseCharacter {
     }
 
     this.handleAnimation();
+
+    if (this.healthbar) this.healthbar.onUpdate(this.hp);
   }
 
   handleInputs(engine: Engine, delta: number) {
@@ -81,8 +86,12 @@ export class Player extends BaseCharacter {
     // TEST
     if (engine.input.keyboard.wasPressed(Keys.P)) {
       this.hp -= 1;
-      if (this.healthbar) this.healthbar.onUpdate(this.hp);
-      if (this.hp === 0) this.handleDying();
+      // if (this.healthbar) this.healthbar.onUpdate(this.hp);
+      // if (this.hp === 0) this.handleDying();
     }
+  }
+
+  handleTakeDamage(damage: number) {
+    this.hp -= damage;
   }
 }

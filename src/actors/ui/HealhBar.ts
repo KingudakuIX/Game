@@ -26,7 +26,6 @@ export class HealthBar extends Actor {
   }
   onUpdate(hp: number) {
     this.hp = hp;
-    console.log("hp", hp);
   }
   // Demo purpose:
   onPreUpdate(engine: Engine) {

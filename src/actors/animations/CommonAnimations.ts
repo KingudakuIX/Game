@@ -61,14 +61,6 @@ export const getCharacterAnimation = (imageSource: ImageSource) => {
         ),
       }),
     },
-    // die_start: Animation.fromSpriteSheetCoordinates({
-    //   spriteSheet: characterSpriteSheet,
-    //   frameCoordinates: generateFramesCoordinates("horizontal", 20, [0, 6], 300),
-    // }),
-    // die_end: Animation.fromSpriteSheetCoordinates({
-    //   spriteSheet: characterSpriteSheet,
-    //   frameCoordinates: generateFramesCoordinates("horizontal", 20, [5, 6], 300),
-    // }),
   };
 
   // Return previously generated animations
@@ -77,7 +69,4 @@ export const getCharacterAnimation = (imageSource: ImageSource) => {
 
 export const animationsFrames = {
   dying: generateFramesCoordinates("horizontal", 20, [0, 6], 300),
-  // dying: [
-  //   Animation.fromSpriteSheetCoordinates({ spriteSheet: characterSpriteSheet, frameCoordinates: generateFramesCoordinates("horizontal", 20, [5, 6], 300), }),
-  // ]
 }

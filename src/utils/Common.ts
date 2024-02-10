@@ -1,5 +1,12 @@
 import { Animation, SpriteSheet } from "excalibur";
 
+export interface Grid {
+  columns: number,
+  rows: number,
+  spriteWidth: number,
+  spriteHeight: number,
+}
+
 export interface AnimationData {
   [action: string]: {
     [direction: string]: Animation;
@@ -65,5 +72,3 @@ export const guid = () => {
     S4()
   );
 };
-
-export const DYING = "dying";

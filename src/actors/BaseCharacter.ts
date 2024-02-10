@@ -1,18 +1,17 @@
 import { Actor, CollisionType, Color, Engine, ImageSource, Shape, SpriteSheet, Vector } from "excalibur";
 import { state } from "../game/Game";
-import { AnimationData, DYING, generateAnimationsFromFramesCoordinates } from "../utils/Common";
+import { AnimationData } from "../utils/Common";
 import { DEBUG, SCALE_VEC, SPEED_IDLE } from "../utils/Constants";
 import { Direction } from "../utils/InputManager";
-import { animationsFrames, getCharacterAnimation } from "./animations/CommonAnimations";
+import { getCharacterAnimation } from "./animations/CommonAnimations";
 import { SpriteSequence } from "./animations/SpriteSequence";
+import { Skill } from "./behaviour/SkillsBehaviour";
+import { Behaviour } from "./misc/Behaviour";
 import { Collision } from "./misc/Collision";
 
-// const SPEED = 6;
-// const SPEED_IDLE = new Vector(0, 0);
-// const SPEED_RIGHT = new Vector(1, 0);
-// const SPEED_LEFT = new Vector(-1, 0);
-// const SPEED_UP = new Vector(0, -1);
-// const SPEED_DOWN = new Vector(0, 1);
+const _DEBUG = false;
+
+const DEBUG_CHARACTER = _DEBUG && DEBUG;
 
 export class BaseCharacter extends Actor {
   isDying = false;
@@ -22,6 +21,9 @@ export class BaseCharacter extends Actor {
   animations: AnimationData;
   actionAnimation: SpriteSequence<any> | null = null;
   collision: Collision | null = null;
+  behaviours: Behaviour[] = [];
+  skills: Skill[] = [];
+
   constructor(x: number, y: number, imageSource: ImageSource) {
     super({
       x: x,
@@ -39,7 +41,7 @@ export class BaseCharacter extends Actor {
     // @ts-ignore
     this.graphics.use(this.animations.idle.down);
 
-    if (DEBUG) {
+    if (DEBUG_CHARACTER) {
       const collision = new Collision(x, y, new Vector(0, 8));
       collision.z = 200;
       state.instance?.add(collision);
@@ -49,16 +51,27 @@ export class BaseCharacter extends Actor {
 
   onPreUpdate(engine: Engine, delta: number): void {
     this.progressThroughActionAnimation(delta);
+
     this.handleAnimation();
 
-    if (DEBUG && this.collision) {
+    this.behaviours.forEach((behaviour) => {
+      if (behaviour.condition(this)) {
+        if (!behaviour.running) behaviour.enterCallback(this, delta);
+        behaviour.callback(this, delta);
+      }
+      else if (behaviour.running && behaviour.exitCallback) {
+        behaviour.exitCallback(this, delta);
+      }
+    })
+
+    if (DEBUG_CHARACTER && this.collision) {
       this.collision.parentPos = this.pos.clone();
     }
   }
 
   handleAnimation() {
     // console.log("animation", this.action, this.direction);    
-    if (!this.isDying) {
+    if (!this.isDying && !this.actionAnimation) {
       // @ts-ignore
       const animation = this.animations[this.action][this.direction] ?? this.animations[this.action];
       this.graphics.use(animation);
@@ -71,32 +84,6 @@ export class BaseCharacter extends Actor {
       this.vel = SPEED_IDLE;
       this.actionAnimation.update(delta);
     }
-  }
-
-  handleDying() {
-    this.isDying = true;
-
-    const dyingAnimationFrames = generateAnimationsFromFramesCoordinates(this.spriteSheet, animationsFrames.dying);
-
-    this.actionAnimation = new SpriteSequence(
-      DYING,
-      dyingAnimationFrames.map(frame => {
-        return {
-          x: 0,
-          y: 0,
-          duration: frame.frameDuration ?? 0,
-          callbackFn: (object: BaseCharacter, index: number) => {
-            object.graphics.use(dyingAnimationFrames[index]);
-          }
-        }
-      }),
-      () => {
-        this.graphics.use(dyingAnimationFrames[dyingAnimationFrames.length - 1]);
-        this.actionAnimation = null;
-      }
-    );
-
-    this.actionAnimation.actorObject = this;
   }
 
   setAction(action: string) {

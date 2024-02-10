@@ -1,6 +1,6 @@
 import { Frame } from "../../utils/Common";
 
-interface ActionFrame<T> extends Frame {
+export interface ActionFrame<T> extends Frame {
   callbackFn?: (object: T, index: number) => void;
 }
 

@@ -19,3 +19,6 @@ export const SPEED_UP = new Vector(0, -1);
 export const SPEED_DOWN = new Vector(0, 1);
 
 export const DEBUG = true;
+
+export const DYING = "dying";
+export const MELEE_ATTACK = "melee_attack";
