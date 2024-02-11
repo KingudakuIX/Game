@@ -13,28 +13,39 @@ export const deathBehaviour = () => {
     callback: (actor) => {
       actor.isDying = true;
 
-      const dyingAnimationFrames = generateAnimationsFromFramesCoordinates(actor.spriteSheet, animationsFrames.dying);
+      actor.collider.clear();
+
+      actor.label.kill();
+      actor.label = null;
+      actor.healthbar.kill();
+      actor.healthbar = null;
+
+      const dyingAnimationFrames = generateAnimationsFromFramesCoordinates(
+        actor.spriteSheet,
+        animationsFrames.dying
+      );
 
       actor.actionAnimation = new SpriteSequence(
         DYING,
-        dyingAnimationFrames.map(frame => {
+        dyingAnimationFrames.map((frame) => {
           return {
             x: 0,
             y: 0,
             duration: frame.frameDuration ?? 0,
             callbackFn: (object: BaseCharacter, index: number) => {
-              console.log("enter here?")
               object.graphics.use(dyingAnimationFrames[index]);
-            }
-          }
+            },
+          };
         }),
         () => {
-          actor.graphics.use(dyingAnimationFrames[dyingAnimationFrames.length - 1]);
+          actor.graphics.use(
+            dyingAnimationFrames[dyingAnimationFrames.length - 1]
+          );
           actor.actionAnimation = null;
         }
       );
 
       actor.actionAnimation.actorObject = actor;
-    }
+    },
   });
-}
+};

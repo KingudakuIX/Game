@@ -1,16 +1,28 @@
-import {
-  Engine,
-  Keys
-} from "excalibur";
+import { Engine, Keys, SpriteSheet } from "excalibur";
 import { images } from "../game/Resources";
-import { FPS, SPEED_DOWN, SPEED_IDLE, SPEED_LEFT, SPEED_RIGHT, SPEED_UP, TAG_ENEMY, TAG_PLAYER } from "../utils/Constants";
+import {
+  generateAnimationsFromFramesCoordinates,
+  generateFramesCoordinates,
+} from "../utils/Common";
+import {
+  SPEED_DOWN,
+  SPEED_IDLE,
+  SPEED_LEFT,
+  SPEED_RIGHT,
+  SPEED_UP,
+  TAG_ENEMY,
+  TAG_PLAYER,
+} from "../utils/Constants";
 import { Direction, inputManager } from "../utils/InputManager";
 import { characterAnimations } from "./Animations";
 import { BaseCharacter } from "./BaseCharacter";
+import { Empty } from "./Empty";
 import { Label } from "./Label";
+import { SpriteSequence } from "./animations/SpriteSequence";
 import { deathBehaviour } from "./behaviour/DeathBehaviour";
 import { playerSkillsBehaviour } from "./behaviour/PlayerSkillBehaviour";
 import { ProjectileProps } from "./effects/Projectile";
+import { ExtendedActor } from "./misc/Behaviour";
 import { getCastSkill } from "./skills/castAttackSkill";
 import { HealthBar } from "./ui/HealhBar";
 
@@ -20,13 +32,10 @@ export class Player extends BaseCharacter {
   moving = false;
   hp = 10;
   healthbar: HealthBar | null = null;
+  label: Label | null = null;
 
   constructor(x: number, y: number) {
-    super(
-      x,
-      y,
-      images.character_01,
-    );
+    super(x, y, images.character_01);
   }
 
   onInitialize(engine: Engine): void {
@@ -59,10 +68,51 @@ export class Player extends BaseCharacter {
       height: 64,
       damage: 2,
       speed: 200,
+      duration: 5000,
       hitTag: [TAG_ENEMY],
-    }
+      onCollision: (actor: ExtendedActor) => {
+        const empty = new Empty();
+
+        const explosionSpriteSheet = SpriteSheet.fromImageSource({
+          image: images.flame_01,
+          grid: {
+            columns: 9,
+            rows: 30,
+            spriteWidth: 64,
+            spriteHeight: 64,
+          },
+        });
+
+        const explosionAnimationFrames =
+          generateAnimationsFromFramesCoordinates(
+            explosionSpriteSheet,
+            generateFramesCoordinates("horizontal", 10, [0, 6], 100)
+          );
+
+        empty.actionAnimation = new SpriteSequence(
+          "EXPLOSION",
+          Array.from(new Array(18)).map((_) => {
+            return {
+              duration: 100,
+              x: 0,
+              y: 0,
+              callbackFn: (object: BaseCharacter, index: number) => {
+                const idx = index % 6;
+                object.graphics.use(explosionAnimationFrames[idx]);
+              },
+            };
+          }),
+          () => {
+            empty.kill();
+          }
+        );
+        empty.actionAnimation.actorObject = empty;
+        empty.z = actor.z + 1;
+        actor.addChild(empty);
+      },
+    };
     const skill = getCastSkill(this.imageSource, fireBall);
-    skill.key = "Num1"
+    skill.key = "Num1";
 
     this.skills.push(skill);
 
@@ -70,6 +120,7 @@ export class Player extends BaseCharacter {
     label.pos.y = -30;
     label.z = this.z + 1;
     this.addChild(label);
+    this.label = label;
 
     const healthbar = new HealthBar(this.hp);
     healthbar.z = this.z + 1;
@@ -95,7 +146,7 @@ export class Player extends BaseCharacter {
   }
 
   handleInputs(engine: Engine, delta: number) {
-    if (this.isDying) return;
+    if (this.isDying || this.actionAnimation) return;
 
     var vel = SPEED_IDLE.clone();
     if (inputManager.inputs.directions[Direction.up]) {
@@ -111,7 +162,7 @@ export class Player extends BaseCharacter {
       vel.addEqual(SPEED_RIGHT);
     }
     const moving = vel.x !== 0 || vel.y !== 0;
-    this.vel = moving ? vel.normalize().scale(SPEED * Math.floor(delta / FPS)) : vel;
+    this.vel = moving ? vel.normalize().scale(SPEED) : vel;
 
     this.moving = moving;
 

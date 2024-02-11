@@ -1,11 +1,21 @@
-import { FPS, SPEED_DOWN, SPEED_IDLE, SPEED_LEFT, SPEED_RIGHT, SPEED_UP } from "../../utils/Constants";
+import {
+  SPEED_DOWN,
+  SPEED_IDLE,
+  SPEED_LEFT,
+  SPEED_RIGHT,
+  SPEED_UP,
+} from "../../utils/Constants";
 import { Direction } from "../../utils/InputManager";
 import { Behaviour, ExtendedActor } from "../misc/Behaviour";
 
 export const followBehaviour = () => {
   return new Behaviour({
     condition: (actor) => {
-      return !actor.isDying && actor.actionAnimation === null && actor.target !== null;
+      return (
+        !actor.isDying &&
+        actor.actionAnimation === null &&
+        actor.target !== null
+      );
     },
     callback: (actor, _, delta) => {
       followTarget(actor, delta);
@@ -15,9 +25,9 @@ export const followBehaviour = () => {
       // Stop actor from moving and reset it's speed
       actor.vel = SPEED_IDLE;
       actor.moving = false;
-    }
+    },
   });
-}
+};
 
 const followTarget = (actor: ExtendedActor, delta: number) => {
   // Move towards the target point if far enough away
@@ -42,8 +52,8 @@ const followTarget = (actor: ExtendedActor, delta: number) => {
   } else {
     actor.moving = false;
   }
-  actor.vel = actor.moving ? vel.normalize().scale(actor.speed * Math.floor(delta / FPS)) : vel;
-}
+  actor.vel = actor.moving ? vel.normalize().scale(actor.speed) : vel;
+};
 
 const faceTarget = (actor: ExtendedActor) => {
   const pos = actor.target.pos;
@@ -57,4 +67,4 @@ const faceTarget = (actor: ExtendedActor) => {
     direction = actor.pos.y > pos.y ? Direction.up : Direction.down;
   }
   actor.setDirection(direction);
-}
+};

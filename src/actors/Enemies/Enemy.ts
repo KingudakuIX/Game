@@ -1,6 +1,5 @@
 import { Actor, Engine, ImageSource, Keys } from "excalibur";
 import { TAG_ENEMY } from "../../utils/Constants";
-import { Label } from "../Label";
 import { Npc } from "../Npc";
 import { deathBehaviour } from "../behaviour/DeathBehaviour";
 import { followBehaviour } from "../behaviour/FollowBehaviour";
@@ -23,11 +22,7 @@ export class Enemy extends Npc {
   speed = 80;
 
   constructor({ x, y, imageSource, name, hp }: EnemyProps) {
-    super(
-      x,
-      y,
-      imageSource,
-    );
+    super(x, y, imageSource);
 
     this.hp = hp;
 
@@ -43,10 +38,6 @@ export class Enemy extends Npc {
     this.behaviours.push(followBehaviour());
     this.behaviours.push(skillsBehaviour());
 
-    const label = new Label(this.characterName);
-    label.pos.y = -30;
-    this.addChild(label);
-
     const healthbar = new HealthBar(this.hp);
     this.addChild(healthbar);
     this.healthbar = healthbar;
@@ -59,7 +50,7 @@ export class Enemy extends Npc {
 
     if (this.isDying) return;
 
-    this.setAction(this.moving ? "walk" : "idle")
+    this.setAction(this.moving ? "walk" : "idle");
 
     // TEST
     if (engine.input.keyboard.wasPressed(Keys.L)) {
@@ -76,12 +67,11 @@ export class Enemy extends Npc {
     const dest = this.target.pos;
     const distance = Math.round(dest.distance(this.pos));
     if (distance <= 40) {
-
     }
   }
 
   async handleTakeDamage(damage: number) {
-    console.log("enemy take damage")
+    console.log("enemy take damage");
     this.hp -= damage;
 
     this.isPain = true;
