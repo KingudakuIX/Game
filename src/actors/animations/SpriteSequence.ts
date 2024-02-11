@@ -1,6 +1,5 @@
-import { Frame } from "../../utils/Common";
-
-export interface ActionFrame<T> extends Frame {
+export interface ActionFrame<T> {
+  duration: number;
   callbackFn?: (object: T, index: number) => void;
 }
 
@@ -12,15 +11,19 @@ export class SpriteSequence<T> {
   currentFrameProgress = 0;
   onFinish: () => void;
   actorObject: T | null;
-  constructor(type: string, frames: ActionFrame<T>[] = [], onFinish: () => void) {
+  constructor(
+    type: string,
+    frames: ActionFrame<T>[] = [],
+    onFinish: () => void
+  ) {
     this.type = type;
     this.frames = frames;
     this.onFinish = () => {
       this.stop = true;
       onFinish();
-    }
+    };
 
-    this.actorObject = null
+    this.actorObject = null;
   }
 
   get frame() {
@@ -32,8 +35,7 @@ export class SpriteSequence<T> {
       return;
     }
 
-    const currentFrameDuration =
-      this.frames[this.currentFrame].duration;
+    const currentFrameDuration = this.frames[this.currentFrame].duration;
 
     // Waiting current frame to finish
     if (this.currentFrameProgress < currentFrameDuration) {

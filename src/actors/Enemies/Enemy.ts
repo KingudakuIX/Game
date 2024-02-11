@@ -1,4 +1,5 @@
-import { Actor, Engine, ImageSource, Keys } from "excalibur";
+import { Actor, Engine, Keys } from "excalibur";
+import { CharacterKeys } from "../../data/characters/Characters";
 import { TAG_ENEMY } from "../../utils/Constants";
 import { Npc } from "../Npc";
 import { deathBehaviour } from "../behaviour/DeathBehaviour";
@@ -9,7 +10,7 @@ import { HealthBar } from "../ui/HealhBar";
 export interface EnemyProps {
   x: number;
   y: number;
-  imageSource: ImageSource;
+  characterKey: CharacterKeys;
   name: string;
   hp: number;
 }
@@ -21,8 +22,8 @@ export class Enemy extends Npc {
   moving = false;
   speed = 80;
 
-  constructor({ x, y, imageSource, name, hp }: EnemyProps) {
-    super(x, y, imageSource);
+  constructor({ x, y, characterKey, name, hp }: EnemyProps) {
+    super(x, y, characterKey);
 
     this.hp = hp;
 

@@ -1,7 +1,6 @@
-import { generateAnimationsFromFramesCoordinates } from "../../utils/Common";
+import { Animation } from "excalibur";
 import { DYING } from "../../utils/Constants";
 import { BaseCharacter } from "../BaseCharacter";
-import { animationsFrames } from "../animations/CommonAnimations";
 import { SpriteSequence } from "../animations/SpriteSequence";
 import { Behaviour } from "../misc/Behaviour";
 
@@ -20,26 +19,21 @@ export const deathBehaviour = () => {
       actor.healthbar.kill();
       actor.healthbar = null;
 
-      const dyingAnimationFrames = generateAnimationsFromFramesCoordinates(
-        actor.spriteSheet,
-        animationsFrames.dying
-      );
+      const animation: Animation = actor.animations.death;
 
       actor.actionAnimation = new SpriteSequence(
         DYING,
-        dyingAnimationFrames.map((frame) => {
+        animation.frames.map((frame) => {
           return {
-            x: 0,
-            y: 0,
-            duration: frame.frameDuration ?? 0,
+            duration: frame.duration ?? 0,
             callbackFn: (object: BaseCharacter, index: number) => {
-              object.graphics.use(dyingAnimationFrames[index]);
+              object.graphics.use(frame.graphic!);
             },
           };
         }),
         () => {
           actor.graphics.use(
-            dyingAnimationFrames[dyingAnimationFrames.length - 1]
+            animation.frames[animation.frames.length - 1].graphic!
           );
           actor.actionAnimation = null;
         }

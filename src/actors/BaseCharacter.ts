@@ -1,8 +1,16 @@
-import { Actor, CollisionType, Color, Engine, ImageSource, Shape, SpriteSheet, Vector } from "excalibur";
+import {
+  Actor,
+  CollisionType,
+  Color,
+  Engine,
+  Shape,
+  SpriteSheet,
+  Vector,
+} from "excalibur";
+import { CharacterKeys, characterMap } from "../data/characters/Characters";
 import { AnimationData } from "../utils/Common";
 import { DEBUG, SCALE_VEC, SPEED_IDLE } from "../utils/Constants";
 import { Direction } from "../utils/InputManager";
-import { getCharacterAnimation } from "./animations/CommonAnimations";
 import { SpriteSequence } from "./animations/SpriteSequence";
 import { Skill } from "./behaviour/SkillsBehaviour";
 import { Behaviour } from "./misc/Behaviour";
@@ -24,9 +32,9 @@ export class BaseCharacter extends Actor {
   behaviours: Behaviour[] = [];
   skills: Skill[] = [];
   characterName = "";
-  imageSource: ImageSource;
+  characterKey: CharacterKeys;
 
-  constructor(x: number, y: number, imageSource: ImageSource) {
+  constructor(x: number, y: number, characterKey: CharacterKeys) {
     super({
       x: x,
       y: y,
@@ -35,21 +43,18 @@ export class BaseCharacter extends Actor {
       collisionType: CollisionType.Active,
       color: Color.Violet,
     });
-
-    this.imageSource = imageSource;
+    this.characterKey = characterKey;
   }
 
   onInitialize(engine: Engine): void {
-    const { characterSpriteSheet, characterAnimations } = getCharacterAnimation(this.imageSource);
-    this.spriteSheet = characterSpriteSheet;
-    this.animations = characterAnimations;
+    this.animations = characterMap.get(this.characterKey);
 
     // @ts-ignore
     this.graphics.use(this.animations.idle.down);
 
     this.graphics.onPreDraw = async (ctx, delta) => {
       ctx.tint = this.isPain ? Color.Red : Color.White;
-    }
+    };
 
     if (DEBUG_CHARACTER) {
       // const collision = new Collision(this.pos.x, this.pos.y, new Vector(0, 8));
@@ -60,6 +65,12 @@ export class BaseCharacter extends Actor {
   }
 
   onPreUpdate(engine: Engine, delta: number): void {
+    if (this.actionAnimation) {
+      this.body.collisionType = CollisionType.Fixed;
+    } else {
+      this.body.collisionType = CollisionType.Active;
+    }
+
     this.progressThroughActionAnimation(delta);
 
     this.handleAnimation();
@@ -68,11 +79,10 @@ export class BaseCharacter extends Actor {
       if (behaviour.condition(this)) {
         if (!behaviour.running) behaviour.enterCallback(this, delta);
         behaviour.callback(this, engine, delta);
-      }
-      else if (behaviour.running && behaviour.exitCallback) {
+      } else if (behaviour.running && behaviour.exitCallback) {
         behaviour.exitCallback(this, delta);
       }
-    })
+    });
 
     if (DEBUG_CHARACTER && this.collision) {
       this.collision.parentPos = this.pos.clone();
@@ -81,8 +91,11 @@ export class BaseCharacter extends Actor {
 
   handleAnimation() {
     if (!this.isDying && !this.actionAnimation) {
-      // @ts-ignore
-      const animation = this.animations[this.action][this.direction] ?? this.animations[this.action];
+      const animation =
+        // @ts-ignore
+        this.animations[this.action][this.direction] ??
+        // @ts-ignore
+        this.animations[this.action];
       this.graphics.use(animation);
     }
   }

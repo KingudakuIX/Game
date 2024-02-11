@@ -1,16 +1,18 @@
 import { Animation, SpriteSheet } from "excalibur";
 
 export interface Grid {
-  columns: number,
-  rows: number,
-  spriteWidth: number,
-  spriteHeight: number,
+  columns: number;
+  rows: number;
+  spriteWidth: number;
+  spriteHeight: number;
 }
 
 export interface AnimationData {
-  [action: string]: {
-    [direction: string]: Animation;
-  } | Animation;
+  [action: string]:
+    | {
+        [direction: string]: Animation;
+      }
+    | Animation;
 }
 
 export interface Frame {
@@ -42,16 +44,21 @@ export const generateFramesCoordinates = (
   return frames;
 };
 
-export const generateAnimationsFromFramesCoordinates = (spriteSheet: SpriteSheet, frameCoordinates: Frame[]) => {
+export const generateAnimationsFromFramesCoordinates = (
+  spriteSheet: SpriteSheet,
+  frameCoordinates: Frame[]
+) => {
   const animations: Animation[] = [];
   for (const frameCoordinate of frameCoordinates) {
-    animations.push(Animation.fromSpriteSheetCoordinates({
-      spriteSheet: spriteSheet,
-      frameCoordinates: [frameCoordinate],
-    }));
+    animations.push(
+      Animation.fromSpriteSheetCoordinates({
+        spriteSheet: spriteSheet,
+        frameCoordinates: [frameCoordinate],
+      })
+    );
   }
   return animations;
-}
+};
 
 export const guid = () => {
   const S4 = function () {

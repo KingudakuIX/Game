@@ -1,6 +1,8 @@
 import { useEffect } from "react";
-import { Blunt } from "../actors/Enemies/Blunt/Blunt";
+import { Enemy } from "../actors/Enemies/Enemy";
 import { Player } from "../actors/Player";
+import { Blunt } from "../actors/enemies/Blunt/Blunt";
+import { CharacterKeys } from "../data/characters/Characters";
 import { Map } from "../map/Map";
 import { TAG_NPC, TAG_PLAYER } from "../utils/Constants";
 import { inputManager } from "../utils/InputManager";
@@ -27,12 +29,38 @@ export const Level = () => {
     const player = new Player(32, 32);
     state.instance.add(player);
 
-    const enemy = new Blunt({ x: 364, y: 364, imageSource: images.character_02, name: "Bruto", hp: 10 });
-    enemy.target = player;
-    const enemy2 = new Blunt({ x: -364, y: 164, imageSource: images.character_02, name: "Bruto ferito", hp: 6 });
-    const enemy3 = new Blunt({ x: 264, y: 264, imageSource: images.character_02, name: "Bruto cattivo", hp: 10 });
-    enemy2.target = player;
-    enemy3.target = player;
+    var enemies: Enemy[] = [];
+    for (var i = 0; i < 50; i++) {
+      const randX = Math.round(Math.random() * 1000) - 500;
+      const randY = Math.round(Math.random() * 1000) - 500;
+      const enemy = new Blunt({
+        x: randX,
+        y: randY,
+        characterKey: CharacterKeys.blunt_01,
+        name: `Bruto ${i}`,
+        hp: 10,
+      });
+      enemy.target = player;
+      state.instance.add(enemy);
+      enemies.push(enemy);
+    }
+
+    // const enemy2 = new Blunt({
+    //   x: -364,
+    //   y: 164,
+    //   imageSource: images.character_02,
+    //   name: "Bruto ferito",
+    //   hp: 6,
+    // });
+    // const enemy3 = new Blunt({
+    //   x: 264,
+    //   y: 264,
+    //   imageSource: images.character_02,
+    //   name: "Bruto cattivo",
+    //   hp: 10,
+    // });
+    // enemy2.target = player;
+    // enemy3.target = player;
 
     // const enemyAreaInner = new EnemyArea({ radius: 100, color: Color.Orange });
 
@@ -45,9 +73,8 @@ export const Level = () => {
     //   outer: enemyAreaOuter,
     // })
 
-    state.instance.add(enemy);
-    state.instance.add(enemy2);
-    state.instance.add(enemy3);
+    // state.instance.add(enemy2);
+    // state.instance.add(enemy3);
 
     state.instance.currentScene.world.queryManager.createQuery([TAG_PLAYER]);
     state.instance.currentScene.world.queryManager.createQuery([TAG_NPC]);
@@ -59,10 +86,10 @@ export const Level = () => {
     );
 
     state.instance.onPreDraw = () => {
-      enemy.checkForZIndex(player.pos);
-      // enemy2.checkForZIndex(player.pos);
-      // enemy3.checkForZIndex(player.pos);
-    }
+      enemies.forEach((enemy) => {
+        enemy.checkForZIndex(player.pos);
+      });
+    };
 
     // start the game
     state.instance.start(loader);

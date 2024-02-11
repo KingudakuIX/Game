@@ -1,12 +1,13 @@
-import { Engine, ImageSource, Vector } from "excalibur";
+import { Engine, Vector } from "excalibur";
+import { CharacterKeys } from "../data/characters/Characters";
 import { TAG_NPC } from "../utils/Constants";
 import { BaseCharacter } from "./BaseCharacter";
 import { Label } from "./Label";
 
 export class Npc extends BaseCharacter {
   label: Label | null = null;
-  constructor(x: number, y: number, imageSource: ImageSource) {
-    super(x, y, imageSource);
+  constructor(x: number, y: number, characterKey: CharacterKeys) {
+    super(x, y, characterKey);
   }
 
   onInitialize(engine: Engine): void {

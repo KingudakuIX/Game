@@ -1,9 +1,5 @@
-import { Engine, Keys, SpriteSheet } from "excalibur";
-import { images } from "../game/Resources";
-import {
-  generateAnimationsFromFramesCoordinates,
-  generateFramesCoordinates,
-} from "../utils/Common";
+import { Engine, Keys } from "excalibur";
+import { CharacterKeys } from "../data/characters/Characters";
 import {
   SPEED_DOWN,
   SPEED_IDLE,
@@ -16,14 +12,10 @@ import {
 import { Direction, inputManager } from "../utils/InputManager";
 import { characterAnimations } from "./Animations";
 import { BaseCharacter } from "./BaseCharacter";
-import { Empty } from "./Empty";
 import { Label } from "./Label";
-import { SpriteSequence } from "./animations/SpriteSequence";
 import { deathBehaviour } from "./behaviour/DeathBehaviour";
 import { playerSkillsBehaviour } from "./behaviour/PlayerSkillBehaviour";
-import { ProjectileProps } from "./effects/Projectile";
-import { ExtendedActor } from "./misc/Behaviour";
-import { getCastSkill } from "./skills/castAttackSkill";
+import { createFireBall01 } from "./spells/fire/FireBall01";
 import { HealthBar } from "./ui/HealhBar";
 
 const SPEED = 120;
@@ -35,7 +27,7 @@ export class Player extends BaseCharacter {
   label: Label | null = null;
 
   constructor(x: number, y: number) {
-    super(x, y, images.character_01);
+    super(x, y, CharacterKeys.wizard_01);
   }
 
   onInitialize(engine: Engine): void {
@@ -51,67 +43,7 @@ export class Player extends BaseCharacter {
     this.behaviours.push(deathBehaviour());
     this.behaviours.push(playerSkillsBehaviour());
 
-    const fireBall: ProjectileProps = {
-      imageSource: images.flame_01,
-      initialPos: 8,
-      range: [0, 6],
-      frameDuration: 100,
-      grid: {
-        columns: 9,
-        rows: 30,
-        spriteWidth: 64,
-        spriteHeight: 64,
-      },
-      x: 0,
-      y: 0,
-      width: 64,
-      height: 64,
-      damage: 2,
-      speed: 200,
-      duration: 5000,
-      hitTag: [TAG_ENEMY],
-      onCollision: (actor: ExtendedActor) => {
-        const empty = new Empty();
-
-        const explosionSpriteSheet = SpriteSheet.fromImageSource({
-          image: images.flame_01,
-          grid: {
-            columns: 9,
-            rows: 30,
-            spriteWidth: 64,
-            spriteHeight: 64,
-          },
-        });
-
-        const explosionAnimationFrames =
-          generateAnimationsFromFramesCoordinates(
-            explosionSpriteSheet,
-            generateFramesCoordinates("horizontal", 10, [0, 6], 100)
-          );
-
-        empty.actionAnimation = new SpriteSequence(
-          "EXPLOSION",
-          Array.from(new Array(18)).map((_) => {
-            return {
-              duration: 100,
-              x: 0,
-              y: 0,
-              callbackFn: (object: BaseCharacter, index: number) => {
-                const idx = index % 6;
-                object.graphics.use(explosionAnimationFrames[idx]);
-              },
-            };
-          }),
-          () => {
-            empty.kill();
-          }
-        );
-        empty.actionAnimation.actorObject = empty;
-        empty.z = actor.z + 1;
-        actor.addChild(empty);
-      },
-    };
-    const skill = getCastSkill(this.imageSource, fireBall);
+    const skill = createFireBall01({ tags: [TAG_ENEMY] });
     skill.key = "Num1";
 
     this.skills.push(skill);
@@ -170,13 +102,6 @@ export class Player extends BaseCharacter {
     if (engine.input.keyboard.wasPressed(Keys.P)) {
       this.hp -= 1;
     }
-    // const skill = this.skills.find((skill) => skill.key === "Num1");
-    // if (engine.input.keyboard.wasPressed(Keys.Num1)) {
-    //   console.log("Button 1 - pressed");
-    //   if (skill) skill.execute = true;
-    // } else {
-    //   if (skill) skill.execute = false;
-    // }
   }
 
   async handleTakeDamage(damage: number) {
@@ -185,10 +110,5 @@ export class Player extends BaseCharacter {
     this.isPain = true;
     await this.actions.delay(150).toPromise();
     this.isPain = false;
-
-    // const {characterAnimations} =getCharacterAnimation(this.imageSource);
-    // this.animations = characterAnimations;
-    // this.graphics.ù
-    // this.actions.blink(150, 75, 1);
   }
 }

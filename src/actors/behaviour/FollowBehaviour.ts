@@ -14,7 +14,8 @@ export const followBehaviour = () => {
       return (
         !actor.isDying &&
         actor.actionAnimation === null &&
-        actor.target !== null
+        actor.target !== null &&
+        !actor.target.isDying
       );
     },
     callback: (actor, _, delta) => {
