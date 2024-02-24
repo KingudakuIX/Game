@@ -21,7 +21,7 @@ export interface HitBoxProps {
   onCollision?: (actor: ExtendedActor) => void;
 }
 
-const _DEBUG = false;
+const _DEBUG = true;
 
 const DEBUG_HITBOX = _DEBUG && DEBUG;
 

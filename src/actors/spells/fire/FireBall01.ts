@@ -25,7 +25,7 @@ export const createFireBall01 = ({ tags }: FireballProps) => {
     ...hitbox,
   };
   const fireBall: ProjectileProps = {
-    speed: 200,
+    speed: 400,
     duration: 5000,
     onCollision: (actor: ExtendedActor) => {
       // Create an ablaze effect on the target:

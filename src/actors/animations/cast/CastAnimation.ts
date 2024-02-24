@@ -32,6 +32,15 @@ const createProjectile = (
     x: actor.pos.x,
     y: actor.pos.y,
   });
-  projectile.setDirection(actor.direction);
+
+  // projectile.setDirection(actor.direction);
+
+  const lastPos = state.instance!.input.pointers.primary.lastWorldPos;
+  projectile.rotation = Math.atan2(
+    lastPos.y - actor.pos.y,
+    lastPos.x - actor.pos.x
+  );
+  console.log(projectile.rotation);
+
   state.instance?.add(projectile);
 };

@@ -8,6 +8,7 @@ import {
   Vector,
 } from "excalibur";
 import { CharacterKeys, characterMap } from "../data/characters/Characters";
+import { state } from "../game/Game";
 import { AnimationData } from "../utils/Common";
 import { DEBUG, SCALE_VEC, SPEED_IDLE } from "../utils/Constants";
 import { Direction } from "../utils/InputManager";
@@ -16,7 +17,7 @@ import { Skill } from "./behaviour/SkillsBehaviour";
 import { Behaviour } from "./misc/Behaviour";
 import { Collision } from "./misc/Collision";
 
-const _DEBUG = false;
+const _DEBUG = true;
 
 const DEBUG_CHARACTER = _DEBUG && DEBUG;
 
@@ -57,10 +58,16 @@ export class BaseCharacter extends Actor {
     };
 
     if (DEBUG_CHARACTER) {
-      // const collision = new Collision(this.pos.x, this.pos.y, new Vector(0, 8));
-      // collision.z = 200;
-      // state.instance?.add(collision);
-      // this.collision = collision;
+      const collision = new Collision({
+        x: this.pos.x,
+        y: this.pos.y,
+        width: this.width,
+        height: this.height,
+        offset: new Vector(0, 8),
+      });
+      collision.z = 200;
+      state.instance?.add(collision);
+      this.collision = collision;
     }
   }
 

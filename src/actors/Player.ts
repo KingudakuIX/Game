@@ -102,6 +102,30 @@ export class Player extends BaseCharacter {
     if (engine.input.keyboard.wasPressed(Keys.P)) {
       this.hp -= 1;
     }
+
+    const lastPos = engine.input.pointers.primary.lastWorldPos;
+
+    const mousePos = document.querySelector("#mouse_pos");
+    mousePos &&
+      (mousePos.innerHTML = `x: ${Math.round(lastPos.x)} - y: x: ${Math.round(
+        lastPos.y
+      )}`);
+
+    const pos = document.querySelector("#character_pos");
+    pos &&
+      (pos.innerHTML = `Player: x: ${Math.round(this.pos.x)} - y: ${Math.round(
+        this.pos.y
+      )}`);
+
+    const angle = document.querySelector("#angle");
+    angle &&
+      (angle.innerHTML = `${
+        Math.round(
+          (Math.atan2(lastPos.y - this.pos.y, lastPos.x - this.pos.x) +
+            Math.PI) *
+            100
+        ) / 100
+      }`);
   }
 
   async handleTakeDamage(damage: number) {

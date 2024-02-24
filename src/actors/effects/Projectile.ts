@@ -1,12 +1,5 @@
 import { Collider, CollisionContact, Engine, Side } from "excalibur";
-import {
-  FPS,
-  SPEED_DOWN,
-  SPEED_IDLE,
-  SPEED_LEFT,
-  SPEED_RIGHT,
-  SPEED_UP,
-} from "../../utils/Constants";
+import { SPEED_IDLE } from "../../utils/Constants";
 import { Direction } from "../../utils/InputManager";
 import { BaseEffect, EffectProps } from "./BaseEffect";
 
@@ -36,29 +29,31 @@ export class Projectile extends BaseEffect {
   onPreUpdate(engine: Engine, delta: number): void {
     super.onPreUpdate(engine, delta);
 
-    var vel = SPEED_IDLE;
-    switch (this.direction) {
-      case Direction.up: {
-        vel = SPEED_UP;
-        this.rotation = -Math.PI / 2;
-        break;
-      }
-      case Direction.left: {
-        vel = SPEED_LEFT;
-        this.graphics.flipHorizontal = true;
-        break;
-      }
-      case Direction.down: {
-        vel = SPEED_DOWN;
-        this.rotation = Math.PI / 2;
-        break;
-      }
-      case Direction.right: {
-        vel = SPEED_RIGHT;
-        break;
-      }
-    }
-    this.vel = vel.normalize().scale(this.speed * Math.floor(delta / FPS));
+    var vel = SPEED_IDLE.clone();
+    // switch (this.direction) {
+    //   case Direction.up: {
+    //     vel = SPEED_UP;
+    //     this.rotation = -Math.PI / 2;
+    //     break;
+    //   }
+    //   case Direction.left: {
+    //     vel = SPEED_LEFT;
+    //     this.graphics.flipHorizontal = true;
+    //     break;
+    //   }
+    //   case Direction.down: {
+    //     vel = SPEED_DOWN;
+    //     this.rotation = Math.PI / 2;
+    //     break;
+    //   }
+    //   case Direction.right: {
+    //     vel = SPEED_RIGHT;
+    //     break;
+    //   }
+    // }
+    vel.x = Math.cos(this.rotation);
+    vel.y = Math.sin(this.rotation);
+    this.vel = vel.normalize().scale(this.speed); // vel.normalize().scale(this.speed * Math.floor(delta / FPS));
 
     this.lifetimeProgress += delta;
     if (this.lifetimeProgress > this.duration) {

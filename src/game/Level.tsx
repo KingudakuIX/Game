@@ -30,7 +30,7 @@ export const Level = () => {
     state.instance.add(player);
 
     var enemies: Enemy[] = [];
-    for (var i = 0; i < 50; i++) {
+    for (var i = 0; i < 1; i++) {
       const randX = Math.round(Math.random() * 1000) - 500;
       const randY = Math.round(Math.random() * 1000) - 500;
       const enemy = new Blunt({
