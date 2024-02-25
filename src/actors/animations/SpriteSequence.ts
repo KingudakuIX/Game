@@ -10,11 +10,13 @@ export class SpriteSequence<T> {
   currentFrame = 0;
   currentFrameProgress = 0;
   onFinish: () => void;
+  cleanUpFn?: () => void; // Function to clean up what was left behind by the SpriteSequence when another SpriteSequence is assigned.
   actorObject: T | null;
   constructor(
     type: string,
     frames: ActionFrame<T>[] = [],
-    onFinish: () => void
+    onFinish: () => void,
+    cleanUpFn?: () => void,
   ) {
     this.type = type;
     this.frames = frames;
@@ -22,7 +24,7 @@ export class SpriteSequence<T> {
       this.stop = true;
       onFinish();
     };
-
+    this.cleanUpFn = cleanUpFn;
     this.actorObject = null;
   }
 

@@ -1,3 +1,4 @@
+import { state } from "@/game/Game";
 import {
   Actor,
   Collider,
@@ -5,10 +6,15 @@ import {
   Color,
   Engine,
   Side,
+  Vector,
 } from "excalibur";
-import { DEBUG } from "../../utils/Constants";
 import { ExtendedActor } from "./Behaviour";
-import { Collision } from "./Collision";
+import { createCollision } from "./Collision";
+
+interface Timing {
+  oneTime: boolean;
+  cooldown?: number;
+}
 
 export interface HitBoxProps {
   x: number;
@@ -18,17 +24,16 @@ export interface HitBoxProps {
   radius?: number;
   hitTag: string[];
   damage: number;
+  timing: Timing;
   onCollision?: (actor: ExtendedActor) => void;
 }
-
-const _DEBUG = true;
-
-const DEBUG_HITBOX = _DEBUG && DEBUG;
 
 export class HitBox extends Actor {
   damage: number;
   hitTag: string[] = [];
   radius?: number;
+  collisions: Actor[] = [];
+  timing: Timing;
   onCollision: ((actor: ExtendedActor) => void) | undefined;
   constructor({
     x,
@@ -38,6 +43,7 @@ export class HitBox extends Actor {
     radius,
     hitTag,
     damage,
+    timing,
     onCollision,
   }: HitBoxProps) {
     super({
@@ -51,21 +57,27 @@ export class HitBox extends Actor {
     this.hitTag = hitTag;
     this.damage = damage;
     this.radius = radius;
+    this.timing = timing;
     this.onCollision = onCollision;
   }
-  onInitialize(engine: Engine): void {
-    if (DEBUG_HITBOX) {
-      console.log("width", this.width);
-      console.log("height", this.height);
-      const collision = new Collision({
-        x: this.pos.x,
-        y: this.pos.y,
-        width: this.width,
-        height: this.height,
-        radius: this.radius,
-      });
-      collision.z = this.z + 1;
+  onInitialize(_: Engine): void {
+    if (state.debug.skill_collision) {
+      const collision = createCollision({ offset: new Vector(0, 0), width: this.width, height: this.height, radius: this.radius });
       this.addChild(collision);
+    }
+  }
+  onPreUpdate(engine: Engine, delta: number): void {
+    if (this.timing.oneTime) {
+      return;
+    }
+    if (this.collisions && this.collisions.length > 0) {
+      this.collisions.forEach((actor) => {
+        // @ts-ignore
+        if (!actor.isDying) {
+          // @ts-ignore
+          actor.handleTakeDamage && actor.handleTakeDamage(this.damage, this.id.toString(), this.timing.cooldown ?? 0);
+        }
+      });
     }
   }
   onCollisionStart(
@@ -76,9 +88,14 @@ export class HitBox extends Actor {
   ): void {
     if (other.owner.tags.some((tag) => this.hitTag?.includes(tag))) {
       // @ts-ignore
-      other.owner.handleTakeDamage && other.owner.handleTakeDamage(this.damage);
+      other.owner.handleTakeDamage && other.owner.handleTakeDamage(this.damage, this.id.toString(), this.timing.cooldown ?? 0);
       // @ts-ignore
       this.onCollision && this.onCollision(other.owner);
+      this.collisions.push(other.owner as Actor);
     }
+  }
+  onCollisionEnd(self: Collider, other: Collider): void {
+    console.log("onCollisionEnd - other", other);
+    this.collisions = this.collisions.filter((actor) => actor.id !== other.owner?.id);
   }
 }

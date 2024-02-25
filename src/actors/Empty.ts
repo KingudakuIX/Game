@@ -24,6 +24,10 @@ export class Empty extends Actor {
 
   onPreUpdate(engine: Engine, delta: number): void {
     this.progressThroughActionAnimation(delta);
+    if (this.parent) {
+      // @ts-ignore
+      this.z = this.parent.z + 1;
+    }
   }
 
   // Pass delta time into the actionAnimation looping this way the animation frames.

@@ -30,18 +30,18 @@ export const blunt01Animations: AnimationData = {
   walk: {
     up: Animation.fromSpriteSheetCoordinates({
       spriteSheet: sprite,
-      frameCoordinates: generateFramesCoordinates("horizontal", 8, [0, 7], 100),
+      frameCoordinates: generateFramesCoordinates("horizontal", 8, [0, 8], 100),
     }),
     left: Animation.fromSpriteSheetCoordinates({
       spriteSheet: sprite,
-      frameCoordinates: generateFramesCoordinates("horizontal", 9, [0, 7], 100),
+      frameCoordinates: generateFramesCoordinates("horizontal", 9, [0, 8], 100),
     }),
     down: Animation.fromSpriteSheetCoordinates({
       spriteSheet: sprite,
       frameCoordinates: generateFramesCoordinates(
         "horizontal",
         10,
-        [0, 7],
+        [0, 8],
         100
       ),
     }),
@@ -50,7 +50,7 @@ export const blunt01Animations: AnimationData = {
       frameCoordinates: generateFramesCoordinates(
         "horizontal",
         11,
-        [0, 7],
+        [0, 8],
         100
       ),
     }),

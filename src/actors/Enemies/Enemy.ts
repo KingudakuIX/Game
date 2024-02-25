@@ -19,8 +19,10 @@ export class Enemy extends Npc {
   hp: number;
   target: Actor | null = null;
   healthbar: HealthBar | null = null;
+  healthbarDuration = 0;
   moving = false;
   speed = 80;
+  damageSources: string[] = [];
 
   constructor({ x, y, characterKey, name, hp }: EnemyProps) {
     super(x, y, characterKey);
@@ -42,12 +44,32 @@ export class Enemy extends Npc {
     const healthbar = new HealthBar(this.hp);
     this.addChild(healthbar);
     this.healthbar = healthbar;
+    this.healthbar.graphics.opacity = 0;
   }
 
   onPreUpdate(engine: Engine, delta: number) {
     super.onPreUpdate(engine, delta);
 
-    if (this.healthbar) this.healthbar.onUpdate(this.hp);
+    if (this.healthbar) {
+      // this.healthbar.z = this.z + 1;
+      this.healthbar.onUpdate(this.hp);
+
+      if (this.healthbarDuration > 0) {
+        this.healthbarDuration -= 1;
+        if (this.healthbarDuration <= 0) {
+          this.healthbar.fadeOut();
+          console.log("hidden");
+        }
+      }
+    }
+
+    // TEST
+    if (engine.input.keyboard.wasPressed(Keys.K)) {
+      this.hp -= 1;
+      console.log("enemy healthbar.z", this.healthbar!.z);
+      console.log("enemy.z", this.z);
+      console.log("target.z", this.target!.z);
+    }
 
     if (this.isDying) return;
 
@@ -62,21 +84,37 @@ export class Enemy extends Npc {
     this.handleAnimation();
   }
 
-  onPreUpdateAttack(delta: number) {
-    if (!this.target) return;
-    // Check if the target is the player, if it is, proceed with the attack phase by checking the distance
-    const dest = this.target.pos;
-    const distance = Math.round(dest.distance(this.pos));
-    if (distance <= 40) {
+  canTakeDamage(source: string) {
+    const damageSource = this.damageSources.findIndex((f) => f === source);
+    return damageSource === -1;
+  }
+
+  async handleDamageSource(source: string, cooldown: number) {
+    await this.actions.delay(cooldown).toPromise();
+    this.damageSources = this.damageSources.filter((f) => f !== source);
+  }
+
+  async handleTakeDamage(damage: number, source: string, cooldown: number) {
+    if (this.canTakeDamage(source)) {
+      this.damageSources.push(source);
+      this.hp -= damage;
+
+      this.handleDamageSource(source, cooldown);
+
+      this.showHealthBar();
+
+      this.isPain = true;
+      await this.actions.delay(150).toPromise();
+      this.isPain = false;
     }
   }
 
-  async handleTakeDamage(damage: number) {
-    console.log("enemy take damage");
-    this.hp -= damage;
+  showHealthBar() {
+    if (this.healthbar) {
+      console.log("visible");
+      this.healthbar.fadeIn();
+    }
 
-    this.isPain = true;
-    await this.actions.delay(150).toPromise();
-    this.isPain = false;
+    this.healthbarDuration = 500;
   }
 }

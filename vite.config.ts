@@ -6,4 +6,7 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [tsconfigPaths()],
+  resolve: {
+    alias: [{ find: "@", replacement: "/src" }],
+  }
 });

@@ -1,19 +1,29 @@
+import { BaseEffect, EffectProps } from "@/actors/effects/BaseEffect";
 import { Animation } from "excalibur";
 import { state } from "../../../game/Game";
 import { Projectile, ProjectileProps } from "../../effects/Projectile";
 import { ExtendedActor } from "../../misc/Behaviour";
 
-export const getCastAnimation = (
+interface CastAnimationProps {
   frameCount: number,
-  projectileData: ProjectileProps
-) => {
+  projectileData?: ProjectileProps,
+  effectData?: EffectProps,
+}
+
+export const getCastAnimation = ({ frameCount, projectileData, effectData }: CastAnimationProps) => {
+  var animationFx: BaseEffect | null = null;
   return {
     frames: Array.from(new Array(frameCount)).map((_, index) => {
       return {
         duration: index === 5 ? 500 : 150,
         callbackFn: (actor: ExtendedActor, index: number) => {
           if (index === 5) {
-            createProjectile(actor, projectileData);
+            if (projectileData) {
+              createProjectile(actor, projectileData);
+            } else if (effectData) {
+              animationFx = createEffect(actor, effectData);
+              actor.addChild(animationFx);
+            }
           }
           const animation: Animation = actor.animations.cast[actor.direction];
           actor.graphics.use(animation.frames[index].graphic!);
@@ -33,14 +43,21 @@ const createProjectile = (
     y: actor.pos.y,
   });
 
-  // projectile.setDirection(actor.direction);
-
-  const lastPos = state.instance!.input.pointers.primary.lastWorldPos;
+  const mousePos = actor.mousePos;
   projectile.rotation = Math.atan2(
-    lastPos.y - actor.pos.y,
-    lastPos.x - actor.pos.x
+    mousePos.y - state.instance!.halfDrawHeight,
+    mousePos.x - state.instance!.halfDrawWidth
   );
-  console.log(projectile.rotation);
 
   state.instance?.add(projectile);
+};
+
+const createEffect = (
+  actor: ExtendedActor,
+  effectData: EffectProps
+) => {
+  const animationFx = new BaseEffect(effectData);
+  // animationFx.graphics.flipVertical = flipVertical;
+  // animationFx.graphics.flipHorizontal = flipHorizontal;
+  return animationFx;
 };

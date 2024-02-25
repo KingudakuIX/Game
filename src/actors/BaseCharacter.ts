@@ -1,3 +1,4 @@
+import { Aura, AuraProps } from "@/actors/effects/Aura";
 import {
   Actor,
   CollisionType,
@@ -10,16 +11,12 @@ import {
 import { CharacterKeys, characterMap } from "../data/characters/Characters";
 import { state } from "../game/Game";
 import { AnimationData } from "../utils/Common";
-import { DEBUG, SCALE_VEC, SPEED_IDLE } from "../utils/Constants";
+import { SCALE_VEC, SPEED_IDLE } from "../utils/Constants";
 import { Direction } from "../utils/InputManager";
 import { SpriteSequence } from "./animations/SpriteSequence";
 import { Skill } from "./behaviour/SkillsBehaviour";
 import { Behaviour } from "./misc/Behaviour";
-import { Collision } from "./misc/Collision";
-
-const _DEBUG = true;
-
-const DEBUG_CHARACTER = _DEBUG && DEBUG;
+import { Collision, createCollision } from "./misc/Collision";
 
 export class BaseCharacter extends Actor {
   isDying = false;
@@ -28,18 +25,19 @@ export class BaseCharacter extends Actor {
   direction = Direction.down;
   spriteSheet: SpriteSheet | null = null;
   animations: AnimationData | null = null;
-  actionAnimation: SpriteSequence<any> | null = null;
+  protected actionAnimation: SpriteSequence<any> | null = null;
   collision: Collision | null = null;
   behaviours: Behaviour[] = [];
   skills: Skill[] = [];
   characterName = "";
   characterKey: CharacterKeys;
+  auras: Aura[] = []
 
   constructor(x: number, y: number, characterKey: CharacterKeys) {
     super({
       x: x,
       y: y,
-      collider: Shape.Box(16, 16, undefined, new Vector(0, 8)),
+      collider: Shape.Box(24, 24, undefined, new Vector(0, 8)),
       scale: SCALE_VEC,
       collisionType: CollisionType.Active,
       color: Color.Violet,
@@ -57,15 +55,8 @@ export class BaseCharacter extends Actor {
       ctx.tint = this.isPain ? Color.Red : Color.White;
     };
 
-    if (DEBUG_CHARACTER) {
-      const collision = new Collision({
-        x: this.pos.x,
-        y: this.pos.y,
-        width: this.width,
-        height: this.height,
-        offset: new Vector(0, 8),
-      });
-      collision.z = 200;
+    if (state.debug.collision) {
+      const collision = createCollision({ offset: new Vector(0, 8), width: this.width, height: this.height });
       state.instance?.add(collision);
       this.collision = collision;
     }
@@ -76,6 +67,19 @@ export class BaseCharacter extends Actor {
       this.body.collisionType = CollisionType.Fixed;
     } else {
       this.body.collisionType = CollisionType.Active;
+    }
+
+    const camera = engine.currentScene.camera;
+    // Check if the actor is off-screen
+    if (
+      camera.viewport.left <= this.pos.x &&
+      camera.viewport.right >= this.pos.x &&
+      camera.viewport.top <= this.pos.y &&
+      camera.viewport.bottom >= this.pos.y
+    ) {
+      this.graphics.visible = true;
+    } else {
+      this.graphics.visible = false;
     }
 
     this.progressThroughActionAnimation(delta);
@@ -91,8 +95,15 @@ export class BaseCharacter extends Actor {
       }
     });
 
-    if (DEBUG_CHARACTER && this.collision) {
-      this.collision.parentPos = this.pos.clone();
+    if (state.debug.collision && !this.collision) {
+      const collision = createCollision({ offset: new Vector(0, 8), width: this.width, height: this.height });
+      this.addChild(collision);
+      this.collision = collision;
+    }
+
+    if (!state.debug.collision) {
+      this.collision?.kill();
+      this.collision = null;
     }
   }
 
@@ -115,11 +126,27 @@ export class BaseCharacter extends Actor {
     }
   }
 
+  setActionAnimation<T>(actionAnimation: SpriteSequence<T>) {
+    // Execute the cleanUpFn if the current SpriteSequence have one.
+    if (this.actionAnimation && this.actionAnimation.cleanUpFn) {
+      this.actionAnimation.cleanUpFn();
+    }
+    this.actionAnimation = actionAnimation;
+  }
+
   setAction(action: string) {
     this.action = action;
   }
 
   setDirection(direction: Direction) {
     this.direction = direction;
+  }
+
+  addAura(aura: AuraProps) {
+    this.auras.push(new Aura(aura));
+  }
+
+  removeAura(auraName: string) {
+    this.auras = this.auras.filter((aura) => aura.name !== auraName);
   }
 }

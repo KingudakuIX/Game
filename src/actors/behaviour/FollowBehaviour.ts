@@ -1,9 +1,5 @@
 import {
-  SPEED_DOWN,
-  SPEED_IDLE,
-  SPEED_LEFT,
-  SPEED_RIGHT,
-  SPEED_UP,
+  SPEED_IDLE
 } from "../../utils/Constants";
 import { Direction } from "../../utils/InputManager";
 import { Behaviour, ExtendedActor } from "../misc/Behaviour";
@@ -37,23 +33,27 @@ const followTarget = (actor: ExtendedActor, delta: number) => {
 
   var vel = SPEED_IDLE.clone();
   if (distance > 40) {
-    if (actor.pos.x < dest.x) {
-      vel.addEqual(SPEED_RIGHT);
-    }
-    if (actor.pos.x > dest.x) {
-      vel.addEqual(SPEED_LEFT);
-    }
-    if (actor.pos.y < dest.y) {
-      vel.addEqual(SPEED_DOWN);
-    }
-    if (actor.pos.y > dest.y) {
-      vel.addEqual(SPEED_UP);
-    }
+
+    const direction = actor.target.pos.sub(actor.pos).normalize();
+    actor.pos = actor.pos.add(direction.scale(0.75));
+
+    // if (actor.pos.x < dest.x) {
+    //   vel.addEqual(SPEED_RIGHT);
+    // }
+    // if (actor.pos.x > dest.x) {
+    //   vel.addEqual(SPEED_LEFT);
+    // }
+    // if (actor.pos.y < dest.y) {
+    //   vel.addEqual(SPEED_DOWN);
+    // }
+    // if (actor.pos.y > dest.y) {
+    //   vel.addEqual(SPEED_UP);
+    // }
     actor.moving = true;
   } else {
     actor.moving = false;
   }
-  actor.vel = actor.moving ? vel.normalize().scale(actor.speed) : vel;
+  //actor.vel = actor.moving ? vel.normalize().scale(actor.speed) : vel;
 };
 
 const faceTarget = (actor: ExtendedActor) => {

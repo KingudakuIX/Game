@@ -1,30 +1,34 @@
-import { Actor, Color, Engine, Vector } from "excalibur";
+import { Actor, Color, Vector } from "excalibur";
 
 interface CollisionProps {
-  x: number,
-  y: number,
+  offset: Vector
   width?: number,
   height?: number,
   radius?: number,
-  offset?: Vector
 }
 
 export class Collision extends Actor {
   parentPos = new Vector(0, 0);
-  offset: Vector;
-  constructor({ x, y, width, height, radius, offset = new Vector(0, 0) }: CollisionProps) {
+  constructor({ offset, width, height, radius }: CollisionProps) {
     super({
-      x: x,
-      y: y,
+      x: offset.x,
+      y: offset.y,
       color: Color.Red,
       width: width,
       height: height,
       radius: radius,
     });
-    this.offset = offset;
     this.graphics.opacity = 0.5;
+    this.z = 99999;
   }
-  onPreUpdate(engine: Engine, delta: number): void {
-    this.pos = this.parentPos.addEqual(this.offset);
-  }
+}
+
+// Utility for create new collision object
+export const createCollision = ({ offset, width, height, radius }: CollisionProps) => {
+  return new Collision({
+    offset,
+    width: width,
+    height: height,
+    radius: radius,
+  });
 }

@@ -7,7 +7,6 @@ import { getCastSkill } from "../../skills/castAttackSkill";
 import { createAblaze } from "./Ablaze";
 
 interface FireballProps {
-  // casterSprite: SpriteSheet,
   tags: string[];
 }
 
@@ -19,6 +18,9 @@ export const createFireBall01 = ({ tags }: FireballProps) => {
     height: 64,
     hitTag: tags,
     damage: 2,
+    timing: {
+      oneTime: true,
+    }
   };
   const effect: EffectProps = {
     effectKey: EffectKeys.fireball_01,
@@ -33,7 +35,10 @@ export const createFireBall01 = ({ tags }: FireballProps) => {
       empty.z = actor.z + 1;
       actor.addChild(empty);
     },
+    killOnHit: true,
     ...effect,
   };
-  return getCastSkill(fireBall);
+  const fireBallSkill = getCastSkill({ name: "fireBall", frameCount: 6, projectileData: fireBall, cooldown: 750 });
+  fireBallSkill.target = true;
+  return fireBallSkill;
 };

@@ -2,12 +2,16 @@ import { SpriteSequence } from "../animations/SpriteSequence";
 import { Behaviour, ExtendedActor } from "../misc/Behaviour";
 
 export interface Skill {
+  name: string;
   key?: string;
   execute?: boolean;
   isOnCooldown: boolean;
   cooldownProgress: number;
   cooldown: number;
   range: number;
+  target?: boolean; // Used for spell which are faced on mouse position
+  toggle?: boolean; // Used for aura like skills
+  isActive?: boolean; // used for aura like skills
   getActionAnimation: (actor: ExtendedActor) => SpriteSequence<any>;
 }
 
@@ -29,7 +33,7 @@ export const skillsBehaviour = () => {
         if (currentSkill) {
           currentSkill.isOnCooldown = true;
           const actionAnimation = currentSkill.getActionAnimation(actor);
-          actor.actionAnimation = actionAnimation;
+          actor.setActionAnimation(actionAnimation);
         }
         handleCooldown(actor, delta);
       }

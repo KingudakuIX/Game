@@ -1,9 +1,9 @@
 import { getMaceAnimation } from "../animations/melee/MaceAnimations";
 import { Skill } from "../behaviour/SkillsBehaviour";
-import { getMeleeAttackSkill } from "./meleeAttackSkill";
+import { getBaseAttackSkill } from "./baseAttackSkill";
 
 export const getMaceAttackSkill = (tags: string[]): Skill => {
-  const { frames } = getMaceAnimation(6, tags);
+  const { frames, cleanUpFn } = getMaceAnimation(6, tags);
 
-  return getMeleeAttackSkill(500, 45, frames);
+  return getBaseAttackSkill("maceAttack", 500, 45, frames, cleanUpFn);
 };

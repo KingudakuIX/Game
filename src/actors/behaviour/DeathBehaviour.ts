@@ -14,14 +14,16 @@ export const deathBehaviour = () => {
 
       actor.collider.clear();
 
-      actor.label.kill();
-      actor.label = null;
+      if (actor.label) {
+        actor.label.kill();
+        actor.label = null;
+      }
       actor.healthbar.kill();
       actor.healthbar = null;
 
       const animation: Animation = actor.animations.death;
 
-      actor.actionAnimation = new SpriteSequence(
+      actor.setActionAnimation(new SpriteSequence(
         DYING,
         animation.frames.map((frame) => {
           return {
@@ -35,9 +37,9 @@ export const deathBehaviour = () => {
           actor.graphics.use(
             animation.frames[animation.frames.length - 1].graphic!
           );
-          actor.actionAnimation = null;
+          actor.setActionAnimation(null);
         }
-      );
+      ));
 
       actor.actionAnimation.actorObject = actor;
     },

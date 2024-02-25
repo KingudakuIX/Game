@@ -1,9 +1,28 @@
+import { EffectProps } from "@/actors/effects/BaseEffect";
 import { getCastAnimation } from "../animations/cast/CastAnimation";
 import { Skill } from "../behaviour/SkillsBehaviour";
 import { ProjectileProps } from "../effects/Projectile";
-import { getMeleeAttackSkill } from "./meleeAttackSkill";
+import { getBaseAttackSkill } from "./baseAttackSkill";
 
-export const getCastSkill = (projectileData: ProjectileProps): Skill => {
-  const { frames } = getCastAnimation(6, projectileData);
-  return getMeleeAttackSkill(1500, 300, frames);
+interface CastSkillProps {
+  name: string,
+  frameCount: number;
+  projectileData?: ProjectileProps,
+  effectData?: EffectProps,
+  cooldown: number;
+}
+
+export const getCastSkill = ({
+  name,
+  frameCount,
+  projectileData,
+  effectData,
+  cooldown,
+}: CastSkillProps): Skill => {
+  const { frames } = getCastAnimation({
+    frameCount: frameCount,
+    projectileData: projectileData,
+    effectData: effectData
+  });
+  return getBaseAttackSkill(name, cooldown, 300, frames);
 };

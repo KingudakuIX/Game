@@ -14,10 +14,10 @@ export class Npc extends BaseCharacter {
     super.onInitialize(engine);
     this.addTag(TAG_NPC);
 
-    const label = new Label(this.characterName);
-    label.pos.y = -30;
-    this.label = label;
-    this.addChild(label);
+    // const label = new Label(this.characterName);
+    // label.pos.y = -30;
+    // this.label = label;
+    // this.addChild(label);
   }
 
   onPreUpdate(engine: Engine, delta: number): void {

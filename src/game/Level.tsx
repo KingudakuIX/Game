@@ -28,22 +28,49 @@ export const Level = () => {
     // add player to game
     const player = new Player(32, 32);
     state.instance.add(player);
+    state.dynamicEntities.push(player);
 
     var enemies: Enemy[] = [];
-    for (var i = 0; i < 1; i++) {
-      const randX = Math.round(Math.random() * 1000) - 500;
-      const randY = Math.round(Math.random() * 1000) - 500;
-      const enemy = new Blunt({
-        x: randX,
-        y: randY,
-        characterKey: CharacterKeys.blunt_01,
-        name: `Bruto ${i}`,
-        hp: 10,
-      });
-      enemy.target = player;
-      state.instance.add(enemy);
-      enemies.push(enemy);
-    }
+
+    const enemyCount = document.getElementById("enemyCount");
+
+    setInterval(() => {
+      if (enemies.length < 1) {
+        const randX = Math.round(Math.random() * 1000) - 500;
+        const randY = Math.round(Math.random() * 1000) - 500;
+        const enemy = new Blunt({
+          x: randX,
+          y: randY,
+          characterKey: CharacterKeys.blunt_01,
+          name: `Bruto`,
+          hp: 10,
+        });
+        enemy.target = player;
+        state.instance && state.instance.add(enemy);
+        enemies.push(enemy);
+        state.dynamicEntities.push(enemy);
+
+        if (enemyCount) {
+          enemyCount.innerText = enemies.length.toString();
+        }
+      }
+    }, 200)
+
+    // for (var i = 0; i < 10; i++) {
+    //   const randX = Math.round(Math.random() * 1000) - 500;
+    //   const randY = Math.round(Math.random() * 1000) - 500;
+    //   const enemy = new Blunt({
+    //     x: randX,
+    //     y: randY,
+    //     characterKey: CharacterKeys.blunt_01,
+    //     name: `Bruto ${i}`,
+    //     hp: 10,
+    //   });
+    //   enemy.target = player;
+    //   state.instance.add(enemy);
+    //   enemies.push(enemy);
+    //   state.dynamicEntities.push(enemy);
+    // }
 
     // const enemy2 = new Blunt({
     //   x: -364,
@@ -86,9 +113,9 @@ export const Level = () => {
     );
 
     state.instance.onPreDraw = () => {
-      enemies.forEach((enemy) => {
-        enemy.checkForZIndex(player.pos);
-      });
+      // enemies.forEach((enemy) => {
+      //   enemy.checkForZIndex(player.pos);
+      // });
     };
 
     // start the game

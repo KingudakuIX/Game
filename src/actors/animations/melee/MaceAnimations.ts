@@ -9,7 +9,6 @@ export const getMaceAnimation = (frameCount: number, tags: string[]) => {
   var animationFx: BaseEffect | null = null;
 
   return {
-    hitBox: animationFx,
     frames: Array.from(new Array(frameCount)).map((_) => {
       return {
         duration: 150,
@@ -29,7 +28,13 @@ export const getMaceAnimation = (frameCount: number, tags: string[]) => {
         },
       };
     }),
-  };
+    cleanUpFn: () => {
+      if (animationFx) {
+        animationFx?.kill();
+        animationFx = null
+      }
+    }
+  }
 };
 
 const createAnimationFx = (actor: ExtendedActor, tags: string[]) => {
@@ -71,6 +76,9 @@ const createAnimationFx = (actor: ExtendedActor, tags: string[]) => {
     height: height,
     hitTag: tags,
     damage: 1,
+    timing: {
+      oneTime: true,
+    }
   };
   const effect: EffectProps = {
     effectKey: EffectKeys.impact_01,

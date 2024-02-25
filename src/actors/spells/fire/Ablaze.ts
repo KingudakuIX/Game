@@ -5,7 +5,7 @@ import { SpriteSequence } from "../../animations/SpriteSequence";
 
 export const createAblaze = () => {
   const ablaze = new Empty();
-  const fireBallFrames = animationsMap.get(AnimationKeys.ablaze_01);
+  const ablazeFrames = animationsMap.get(AnimationKeys.ablaze_01);
   ablaze.actionAnimation = new SpriteSequence(
     "EXPLOSION",
     Array.from(new Array(18)).map((_) => {
@@ -14,7 +14,7 @@ export const createAblaze = () => {
         callbackFn: (object: BaseCharacter, index: number) => {
           // Repeat the animation every 6th index.
           const idx = index % 6;
-          object.graphics.use(fireBallFrames[idx]);
+          object.graphics.use(ablazeFrames[idx]);
         },
       };
     }),

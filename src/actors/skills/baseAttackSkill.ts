@@ -2,8 +2,9 @@ import { MELEE_ATTACK } from "../../utils/Constants";
 import { ActionFrame, SpriteSequence } from "../animations/SpriteSequence";
 import { Skill } from "../behaviour/SkillsBehaviour";
 
-export const getMeleeAttackSkill = (cooldown: number, range: number, frames: ActionFrame<any>[]): Skill => {
+export const getBaseAttackSkill = (name: string, cooldown: number, range: number, frames: ActionFrame<any>[], cleanUpFn?: () => void): Skill => {
   return {
+    name: name,
     isOnCooldown: false,
     cooldownProgress: 0,
     cooldown: cooldown,
@@ -12,7 +13,13 @@ export const getMeleeAttackSkill = (cooldown: number, range: number, frames: Act
       const actionAnimation = new SpriteSequence(
         MELEE_ATTACK,
         frames,
-        () => { actor.actionAnimation = null; }
+        () => {
+          if (actor.forceDirection) {
+            actor.forceDirection = false;
+          }
+          actor.setActionAnimation(null);
+        },
+        cleanUpFn,
       );
       actionAnimation.actorObject = actor;
       return actionAnimation;
