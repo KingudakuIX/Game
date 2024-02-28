@@ -2,7 +2,7 @@ import { Animation } from "excalibur";
 import { DYING } from "../../utils/Constants";
 import { BaseCharacter } from "../BaseCharacter";
 import { SpriteSequence } from "../animations/SpriteSequence";
-import { Behaviour } from "../misc/Behaviour";
+import { Behaviour } from "./Behavior";
 
 export const deathBehaviour = () => {
   return new Behaviour({
@@ -23,23 +23,25 @@ export const deathBehaviour = () => {
 
       const animation: Animation = actor.animations.death;
 
-      actor.setActionAnimation(new SpriteSequence(
-        DYING,
-        animation.frames.map((frame) => {
-          return {
-            duration: frame.duration ?? 0,
-            callbackFn: (object: BaseCharacter, index: number) => {
-              object.graphics.use(frame.graphic!);
-            },
-          };
-        }),
-        () => {
-          actor.graphics.use(
-            animation.frames[animation.frames.length - 1].graphic!
-          );
-          actor.setActionAnimation(null);
-        }
-      ));
+      actor.setActionAnimation(
+        new SpriteSequence(
+          DYING,
+          animation.frames.map((frame) => {
+            return {
+              duration: frame.duration ?? 0,
+              callbackFn: (object: BaseCharacter, index: number) => {
+                object.graphics.use(frame.graphic!);
+              },
+            };
+          }),
+          () => {
+            actor.graphics.use(
+              animation.frames[animation.frames.length - 1].graphic!
+            );
+            actor.setActionAnimation(null);
+          }
+        )
+      );
 
       actor.actionAnimation.actorObject = actor;
     },

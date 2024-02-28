@@ -2,9 +2,9 @@ import { Actor, Engine, Keys } from "excalibur";
 import { CharacterKeys } from "../../data/characters/Characters";
 import { TAG_ENEMY } from "../../utils/Constants";
 import { Npc } from "../Npc";
-import { deathBehaviour } from "../behaviour/DeathBehaviour";
-import { followBehaviour } from "../behaviour/FollowBehaviour";
-import { skillsBehaviour } from "../behaviour/SkillsBehaviour";
+import { deathBehaviour } from "../behaviors/DeathBehaviour";
+import { followBehaviour } from "../behaviors/FollowBehaviour";
+import { skillsBehaviour } from "../behaviors/SkillsBehaviour";
 import { HealthBar } from "../ui/HealhBar";
 
 export interface EnemyProps {

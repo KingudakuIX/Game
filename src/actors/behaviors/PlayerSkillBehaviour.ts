@@ -1,7 +1,7 @@
 import { state } from "@/game/Game";
 import { Direction } from "@/utils/InputManager";
 import { Keys } from "excalibur";
-import { Behaviour, ExtendedActor } from "../misc/Behaviour";
+import { Behaviour, ExtendedActor } from "./Behavior";
 import { Skill } from "./SkillsBehaviour";
 
 export const playerSkillsBehaviour = () => {
@@ -38,20 +38,28 @@ export const playerSkillsBehaviour = () => {
           }
           // If the speel is a targeted one, check for mouse position and change character direction based on that:
           if (currentSkill.target) {
-            actor.mousePos = state.instance!.input.pointers.primary.lastScreenPos;
+            actor.mousePos =
+              state.instance!.input.pointers.primary.lastScreenPos;
             // Update player rotation based on mouse position:
-            const rotation = Math.atan2(
-              actor.mousePos.y - state.instance!.halfDrawHeight,
-              actor.mousePos.x - state.instance!.halfDrawWidth
-            ) + Math.PI;
+            const rotation =
+              Math.atan2(
+                actor.mousePos.y - state.instance!.halfDrawHeight,
+                actor.mousePos.x - state.instance!.halfDrawWidth
+              ) + Math.PI;
             var direction = "";
             if (rotation <= Math.PI / 4 || rotation > Math.PI * 1.75) {
               direction = Direction.left;
             } else if (rotation > Math.PI / 4 && rotation <= Math.PI / 1.25) {
               direction = Direction.up;
-            } else if (rotation > Math.PI / 1.25 && rotation <= Math.PI * 1.25) {
+            } else if (
+              rotation > Math.PI / 1.25 &&
+              rotation <= Math.PI * 1.25
+            ) {
               direction = Direction.right;
-            } else if (rotation > Math.PI * 1.25 && rotation <= Math.PI * 1.75) {
+            } else if (
+              rotation > Math.PI * 1.25 &&
+              rotation <= Math.PI * 1.75
+            ) {
               direction = Direction.down;
             }
             actor.setDirection(direction);

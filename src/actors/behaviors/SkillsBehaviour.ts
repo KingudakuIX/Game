@@ -1,5 +1,5 @@
 import { SpriteSequence } from "../animations/SpriteSequence";
-import { Behaviour, ExtendedActor } from "../misc/Behaviour";
+import { Behaviour, ExtendedActor } from "./Behavior";
 
 export interface Skill {
   name: string;

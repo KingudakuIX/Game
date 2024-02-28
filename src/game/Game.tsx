@@ -1,28 +1,24 @@
-import {
-  Actor,
-  DisplayMode,
-  Engine,
-  PointerScope,
-  ScrollPreventionMode,
-} from "excalibur";
+import { Actor, DisplayMode, Engine } from "excalibur";
 // import { TAG_PLAYER } from "../utils/Constants";
 
 interface State {
   instance: Engine | null;
   dynamicEntities: Actor[];
+  player: Actor | null;
   debug: {
     collision: boolean;
     skill_collision: boolean;
-  }
+  };
 }
 
 export var state: State = {
   instance: null,
   dynamicEntities: [],
+  player: null,
   debug: {
     collision: false,
     skill_collision: false,
-  }
+  },
 };
 
 const SCALE = 1;
@@ -30,12 +26,16 @@ const SCALE = 1;
 export const SetupGameCanvas = () => {
   const game = new Engine({
     canvasElementId: "game",
-    width: 600 * SCALE,
-    height: 400 * SCALE,
-    displayMode: DisplayMode.FillContainer,
-    pointerScope: PointerScope.Canvas,
-    grabWindowFocus: false,
-    scrollPreventionMode: ScrollPreventionMode.None,
+    // width: 600 * SCALE,
+    // height: 400 * SCALE,
+    displayMode: DisplayMode.FitScreen,
+    // pointerScope: PointerScope.Canvas,
+    // grabWindowFocus: false,
+    // scrollPreventionMode: ScrollPreventionMode.None,
+    resolution: {
+      width: 600,
+      height: 400,
+    },
     antialiasing: false,
     enableCanvasTransparency: true,
     maxFps: 60,
@@ -55,7 +55,11 @@ export const SetupGameCanvas = () => {
 const onPreUpdate = (engine: Engine, delta: number) => {
   state.dynamicEntities.forEach((entity) => {
     // @ts-ignore
-    if (!entity.isDying) { entity.z = entity.pos.y + 10000; } else { entity.z = 1 }
-  })
+    if (!entity.isDying) {
+      entity.z = entity.pos.y + 10000;
+    } else {
+      entity.z = 1;
+    }
+  });
   // engine.currentScene.world.queryManager.getQuery([TAG_PLAYER]);
-}
+};

@@ -7,6 +7,8 @@ export const CELL_SIZE = 16;
 export const ANCHOR_CENTER = new Vector(0.5, 0.5);
 export const ANCHOR_TOP_LEFT = new Vector(0, 0);
 
+export const VIEWPORT_DRAW_MARGIN = 64;
+
 export const TAG_PLAYER = "TAG_PLAYER";
 export const TAG_NPC = "TAG_NPC";
 export const TAG_ENEMY = "TAG_ENEMY";

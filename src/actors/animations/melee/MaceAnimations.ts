@@ -1,8 +1,8 @@
 import { Animation } from "excalibur";
 import { EffectKeys } from "../../../data/effects/Effects";
 import { Direction } from "../../../utils/InputManager";
+import { ExtendedActor } from "../../behaviors/Behavior";
 import { BaseEffect, EffectProps } from "../../effects/BaseEffect";
-import { ExtendedActor } from "../../misc/Behaviour";
 import { HitBoxProps } from "../../misc/HitBox";
 
 export const getMaceAnimation = (frameCount: number, tags: string[]) => {
@@ -31,10 +31,10 @@ export const getMaceAnimation = (frameCount: number, tags: string[]) => {
     cleanUpFn: () => {
       if (animationFx) {
         animationFx?.kill();
-        animationFx = null
+        animationFx = null;
       }
-    }
-  }
+    },
+  };
 };
 
 const createAnimationFx = (actor: ExtendedActor, tags: string[]) => {
@@ -78,7 +78,7 @@ const createAnimationFx = (actor: ExtendedActor, tags: string[]) => {
     damage: 1,
     timing: {
       oneTime: true,
-    }
+    },
   };
   const effect: EffectProps = {
     effectKey: EffectKeys.impact_01,

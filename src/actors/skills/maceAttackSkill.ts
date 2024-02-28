@@ -1,5 +1,5 @@
 import { getMaceAnimation } from "../animations/melee/MaceAnimations";
-import { Skill } from "../behaviour/SkillsBehaviour";
+import { Skill } from "../behaviors/SkillsBehaviour";
 import { getBaseAttackSkill } from "./baseAttackSkill";
 
 export const getMaceAttackSkill = (tags: string[]): Skill => {

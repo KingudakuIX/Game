@@ -1,8 +1,6 @@
-import {
-  SPEED_IDLE
-} from "../../utils/Constants";
+import { SPEED_IDLE } from "../../utils/Constants";
 import { Direction } from "../../utils/InputManager";
-import { Behaviour, ExtendedActor } from "../misc/Behaviour";
+import { Behaviour, ExtendedActor } from "./Behavior";
 
 export const followBehaviour = () => {
   return new Behaviour({
@@ -33,7 +31,6 @@ const followTarget = (actor: ExtendedActor, delta: number) => {
 
   var vel = SPEED_IDLE.clone();
   if (distance > 40) {
-
     const direction = actor.target.pos.sub(actor.pos).normalize();
     actor.pos = actor.pos.add(direction.scale(0.75));
 

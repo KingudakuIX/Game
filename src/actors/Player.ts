@@ -13,8 +13,8 @@ import {
 import { Direction, inputManager } from "../utils/InputManager";
 import { BaseCharacter } from "./BaseCharacter";
 import { Label } from "./Label";
-import { deathBehaviour } from "./behaviour/DeathBehaviour";
-import { playerSkillsBehaviour } from "./behaviour/PlayerSkillBehaviour";
+import { deathBehaviour } from "./behaviors/DeathBehaviour";
+import { playerSkillsBehaviour } from "./behaviors/PlayerSkillBehaviour";
 import { createFireBall01 } from "./spells/fire/FireBall01";
 import { HealthBar } from "./ui/HealhBar";
 
@@ -127,11 +127,11 @@ export class Player extends BaseCharacter {
 
       this.handleDamageSource(source, cooldown);
 
-      console.log("Is in pain")
+      console.log("Is in pain");
       this.isPain = true;
       await this.actions.delay(150).toPromise();
       this.isPain = false;
-      console.log("Is in pain no more")
+      console.log("Is in pain no more");
     }
   }
 }

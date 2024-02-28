@@ -14,8 +14,8 @@ import { AnimationData } from "../utils/Common";
 import { SCALE_VEC, SPEED_IDLE } from "../utils/Constants";
 import { Direction } from "../utils/InputManager";
 import { SpriteSequence } from "./animations/SpriteSequence";
-import { Skill } from "./behaviour/SkillsBehaviour";
-import { Behaviour } from "./misc/Behaviour";
+import { Behaviour } from "./behaviors/Behavior";
+import { Skill } from "./behaviors/SkillsBehaviour";
 import { Collision, createCollision } from "./misc/Collision";
 
 export class BaseCharacter extends Actor {
@@ -31,7 +31,7 @@ export class BaseCharacter extends Actor {
   skills: Skill[] = [];
   characterName = "";
   characterKey: CharacterKeys;
-  auras: Aura[] = []
+  auras: Aura[] = [];
 
   constructor(x: number, y: number, characterKey: CharacterKeys) {
     super({
@@ -56,7 +56,11 @@ export class BaseCharacter extends Actor {
     };
 
     if (state.debug.collision) {
-      const collision = createCollision({ offset: new Vector(0, 8), width: this.width, height: this.height });
+      const collision = createCollision({
+        offset: new Vector(0, 8),
+        width: this.width,
+        height: this.height,
+      });
       state.instance?.add(collision);
       this.collision = collision;
     }
@@ -96,7 +100,11 @@ export class BaseCharacter extends Actor {
     });
 
     if (state.debug.collision && !this.collision) {
-      const collision = createCollision({ offset: new Vector(0, 8), width: this.width, height: this.height });
+      const collision = createCollision({
+        offset: new Vector(0, 8),
+        width: this.width,
+        height: this.height,
+      });
       this.addChild(collision);
       this.collision = collision;
     }

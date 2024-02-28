@@ -1,16 +1,20 @@
 import { BaseEffect, EffectProps } from "@/actors/effects/BaseEffect";
 import { Animation } from "excalibur";
 import { state } from "../../../game/Game";
+import { ExtendedActor } from "../../behaviors/Behavior";
 import { Projectile, ProjectileProps } from "../../effects/Projectile";
-import { ExtendedActor } from "../../misc/Behaviour";
 
 interface CastAnimationProps {
-  frameCount: number,
-  projectileData?: ProjectileProps,
-  effectData?: EffectProps,
+  frameCount: number;
+  projectileData?: ProjectileProps;
+  effectData?: EffectProps;
 }
 
-export const getCastAnimation = ({ frameCount, projectileData, effectData }: CastAnimationProps) => {
+export const getCastAnimation = ({
+  frameCount,
+  projectileData,
+  effectData,
+}: CastAnimationProps) => {
   var animationFx: BaseEffect | null = null;
   return {
     frames: Array.from(new Array(frameCount)).map((_, index) => {
@@ -52,10 +56,7 @@ const createProjectile = (
   state.instance?.add(projectile);
 };
 
-const createEffect = (
-  actor: ExtendedActor,
-  effectData: EffectProps
-) => {
+const createEffect = (actor: ExtendedActor, effectData: EffectProps) => {
   const animationFx = new BaseEffect(effectData);
   // animationFx.graphics.flipVertical = flipVertical;
   // animationFx.graphics.flipHorizontal = flipHorizontal;

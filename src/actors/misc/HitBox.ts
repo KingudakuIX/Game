@@ -8,7 +8,7 @@ import {
   Side,
   Vector,
 } from "excalibur";
-import { ExtendedActor } from "./Behaviour";
+import { ExtendedActor } from "../behaviors/Behavior";
 import { createCollision } from "./Collision";
 
 interface Timing {
@@ -62,7 +62,12 @@ export class HitBox extends Actor {
   }
   onInitialize(_: Engine): void {
     if (state.debug.skill_collision) {
-      const collision = createCollision({ offset: new Vector(0, 0), width: this.width, height: this.height, radius: this.radius });
+      const collision = createCollision({
+        offset: new Vector(0, 0),
+        width: this.width,
+        height: this.height,
+        radius: this.radius,
+      });
       this.addChild(collision);
     }
   }
@@ -75,7 +80,12 @@ export class HitBox extends Actor {
         // @ts-ignore
         if (!actor.isDying) {
           // @ts-ignore
-          actor.handleTakeDamage && actor.handleTakeDamage(this.damage, this.id.toString(), this.timing.cooldown ?? 0);
+          actor.handleTakeDamage &&
+            actor.handleTakeDamage(
+              this.damage,
+              this.id.toString(),
+              this.timing.cooldown ?? 0
+            );
         }
       });
     }
@@ -88,7 +98,12 @@ export class HitBox extends Actor {
   ): void {
     if (other.owner.tags.some((tag) => this.hitTag?.includes(tag))) {
       // @ts-ignore
-      other.owner.handleTakeDamage && other.owner.handleTakeDamage(this.damage, this.id.toString(), this.timing.cooldown ?? 0);
+      other.owner.handleTakeDamage &&
+        other.owner.handleTakeDamage(
+          this.damage,
+          this.id.toString(),
+          this.timing.cooldown ?? 0
+        );
       // @ts-ignore
       this.onCollision && this.onCollision(other.owner);
       this.collisions.push(other.owner as Actor);
@@ -96,6 +111,8 @@ export class HitBox extends Actor {
   }
   onCollisionEnd(self: Collider, other: Collider): void {
     console.log("onCollisionEnd - other", other);
-    this.collisions = this.collisions.filter((actor) => actor.id !== other.owner?.id);
+    this.collisions = this.collisions.filter(
+      (actor) => actor.id !== other.owner?.id
+    );
   }
 }

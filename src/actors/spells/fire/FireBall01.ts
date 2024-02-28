@@ -1,7 +1,7 @@
 import { EffectKeys } from "../../../data/effects/Effects";
+import { ExtendedActor } from "../../behaviors/Behavior";
 import { EffectProps } from "../../effects/BaseEffect";
 import { ProjectileProps } from "../../effects/Projectile";
-import { ExtendedActor } from "../../misc/Behaviour";
 import { HitBoxProps } from "../../misc/HitBox";
 import { getCastSkill } from "../../skills/castAttackSkill";
 import { createAblaze } from "./Ablaze";
@@ -20,7 +20,7 @@ export const createFireBall01 = ({ tags }: FireballProps) => {
     damage: 2,
     timing: {
       oneTime: true,
-    }
+    },
   };
   const effect: EffectProps = {
     effectKey: EffectKeys.fireball_01,
@@ -38,7 +38,12 @@ export const createFireBall01 = ({ tags }: FireballProps) => {
     killOnHit: true,
     ...effect,
   };
-  const fireBallSkill = getCastSkill({ name: "fireBall", frameCount: 6, projectileData: fireBall, cooldown: 750 });
+  const fireBallSkill = getCastSkill({
+    name: "fireBall",
+    frameCount: 6,
+    projectileData: fireBall,
+    cooldown: 750,
+  });
   fireBallSkill.target = true;
   return fireBallSkill;
 };
