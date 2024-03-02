@@ -7,6 +7,8 @@ export const spritesMap = new Map();
 
 export enum SpriteKeys {
   // Characters:
+  mannequin,
+
   wizard_01,
   blunt_01,
   blunt_01_big,

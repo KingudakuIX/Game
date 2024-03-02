@@ -1,4 +1,4 @@
-import { ExActor } from "@/actors/characters/ExtendedActor";
+import { ExActor } from "@/actors/core/ExtendedActor";
 import { Feature } from "@/actors/features/Feature";
 import { Damage } from "@/actors/misc/Damage";
 import { Features } from "@/data/Features";
@@ -16,9 +16,7 @@ export class DamageableFeature extends Feature {
       key: Features.damageable,
       actor,
     });
-  }
 
-  onRenderLoop() {
     // Update graphics color to highlight the damage taken.
     this.actor.graphics.onPreDraw = async (ctx) => {
       ctx.tint = this.actor.isInPain ? Color.Red : Color.White;

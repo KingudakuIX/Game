@@ -1,17 +1,16 @@
-import { ExActor } from "@/actors/characters/ExtendedActor";
+import { ExActor } from "@/actors/core/ExtendedActor";
 
 interface FeatureArgs {
   key: string;
   actor: ExActor;
-  initFn?: (actor: ExActor) => void;
 }
 
 export class Feature {
   key: string;
   actor: ExActor;
-  constructor({ key, actor, initFn }: FeatureArgs) {
+  [key: string]: any;
+  constructor({ key, actor }: FeatureArgs) {
     this.key = key;
     this.actor = actor;
-    initFn && initFn(actor);
   }
 }

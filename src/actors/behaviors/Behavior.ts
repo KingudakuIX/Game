@@ -1,4 +1,4 @@
-import { ExActor } from "@/actors/characters/ExtendedActor";
+import { ExActor } from "@/actors/core/ExtendedActor";
 import { Engine } from "excalibur";
 
 interface BehaviorArgs {

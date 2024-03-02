@@ -7,13 +7,33 @@ export interface Grid {
   spriteHeight: number;
 }
 
-export interface AnimationData {
-  [action: string]:
-    | {
-        [direction: string]: Animation;
-      }
-    | Animation;
+export enum Direction {
+  up = "up",
+  up_right = "up_right",
+  right = "right",
+  down_right = "down_right",
+  down = "down",
+  down_left = "down_left",
+  left = "left",
+  up_left = "up_left",
 }
+
+export enum Action {
+  idle = "idle",
+  running = "running",
+  rolling = "rolling",
+  dying = "dying",
+  casting_2h = "casting_2h",
+}
+
+export type AnimationData = {
+  [key in Action]?:
+    | {
+        [key in Direction]: Animation;
+      }
+    | Animation
+    | undefined;
+};
 
 export interface Frame {
   x: number;

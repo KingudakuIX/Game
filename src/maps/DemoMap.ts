@@ -1,5 +1,5 @@
-import { Player } from "@/actors/Player";
 import { Map } from "@/actors/map/Map";
+import { PlayerActor } from "@/actors/player/PlayerActor";
 import { Maps } from "@/data/Maps";
 import { state } from "@/game/Game";
 import { images, loader } from "@/game/Resources";
@@ -11,10 +11,9 @@ export function DemoMap() {
 
   // After game engine is set up, load scene and actors:
   state.instance.start(loader).then(() => {
-    const player = new Player(
-      images.backgroundImage.width / 2,
-      images.backgroundImage.height / 2
-    );
+    const player = new PlayerActor();
+    player.pos.x = images.backgroundImage.width / 2;
+    player.pos.y = images.backgroundImage.height / 2;
 
     const demoScene = new ExtendedScene({
       player: player,

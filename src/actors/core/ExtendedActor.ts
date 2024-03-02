@@ -5,9 +5,13 @@ import { Actor, Engine } from "excalibur";
 export interface ExActor extends Actor {
   behaviors: Behavior[];
   features: { [key: string]: Feature };
+  getFeature: <T>(feature: string) => T | undefined;
   [key: string]: any;
 }
 
+/**
+ * @description Class which every objects extends from, it handles all features and behaviors
+ */
 export class ExtendedActor extends Actor {
   behaviors: Behavior[] = [];
   features: { [key: string]: Feature } = {};
@@ -36,5 +40,9 @@ export class ExtendedActor extends Actor {
         behavior.exitCallback(this, delta);
       }
     });
+  }
+
+  getFeature<T>(feature: string) {
+    return this.features[feature] as T | undefined;
   }
 }
