@@ -99,3 +99,8 @@ export const guid = () => {
     S4()
   );
 };
+
+export const Round = (input: number, decimals: number = 2) => {
+  const precision = 10 * decimals;
+  return Math.round(input * precision) / precision;
+};

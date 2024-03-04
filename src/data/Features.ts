@@ -4,4 +4,5 @@ export const Features = {
   state: "state",
   damageable: "damageable",
   animations: "animations",
+  debug: "debug",
 };

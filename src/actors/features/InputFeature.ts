@@ -51,18 +51,10 @@ export class InputFeature extends Feature {
   }
 
   onKeyboardDown(event: KeyEvent, feature: InputFeature) {
-    console.log("onKeyboardDown", event);
-    console.log("directionalKeys", directionalKeys);
-    console.log(
-      "directionalKeys.includes(event.key",
-      directionalKeys.includes(event.key)
-    );
     if (directionalKeys.includes(event.key)) {
       const direction = getDirectionFromKey(event.key);
-      console.log(direction);
       if (!direction) return;
       if (!feature.inputs.directions[direction]) {
-        console.log("sadsaaasa");
         feature.inputs.directions[direction] = true;
         feature.directionsStack.push(direction);
         if (feature.lastDirection !== direction) {
@@ -70,11 +62,9 @@ export class InputFeature extends Feature {
         }
       }
     }
-    console.log("onKeyboardDown", feature.inputs.directions);
   }
 
   onKeyboardUp(event: KeyEvent, feature: InputFeature) {
-    console.log("onKeyboardUp", feature);
     if (directionalKeys.includes(event.key)) {
       const direction = getDirectionFromKey(event.key);
       if (!direction) return;

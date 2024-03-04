@@ -127,11 +127,9 @@ export class Player extends BaseCharacter {
 
       this.handleDamageSource(source, cooldown);
 
-      console.log("Is in pain");
       this.isPain = true;
       await this.actions.delay(150).toPromise();
       this.isPain = false;
-      console.log("Is in pain no more");
     }
   }
 }

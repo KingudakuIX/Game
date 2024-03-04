@@ -1,3 +1,4 @@
+import { EnemyActor } from "@/actors/enemies/EnemyActor";
 import { Map } from "@/actors/map/Map";
 import { PlayerActor } from "@/actors/player/PlayerActor";
 import { Maps } from "@/data/Maps";
@@ -26,8 +27,20 @@ export function DemoMap() {
     const map = new Map({ image: images.backgroundImage });
     demoScene.add(map);
 
+    const enemy = new EnemyActor();
+    enemy.pos.x = images.backgroundImage.width / 2 + 400;
+    enemy.pos.y = images.backgroundImage.height / 2 + 200;
+    demoScene.add(enemy);
+
     state.instance?.add(Maps.demo.key, demoScene);
 
     state.instance?.goToScene(Maps.demo.key);
+
+    // const clock = new StandardClock({ maxFps: 30, tick: () => {} });
+    // demoScene.add(clock);
+
+    setTimeout(() => {
+      enemy.emit("setTarget", player);
+    }, 3000);
   });
 }

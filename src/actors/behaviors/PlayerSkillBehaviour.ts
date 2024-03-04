@@ -79,7 +79,6 @@ export const playerSkillsBehaviour = () => {
 const handleCooldown = (actor: ExtendedActor, delta: number) => {
   actor.skills.every((skill: Skill) => {
     if (skill.isOnCooldown) {
-      console.log("skill.cooldown", skill.cooldown);
       skill.cooldownProgress += delta;
       if (skill.cooldownProgress > skill.cooldown) {
         skill.isOnCooldown = false;

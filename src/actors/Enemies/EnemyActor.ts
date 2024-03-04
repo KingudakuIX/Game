@@ -1,15 +1,13 @@
-import { PlayerMovementBehavior } from "@/actors/behaviors/PlayerMovementBehavior";
+import { FollowBehavior } from "@/actors/behaviors/FollowBehavior";
 import { CharacterActor } from "@/actors/core/CharacterActor";
-import { InputFeature } from "@/actors/features/InputFeature";
-import { Features } from "@/data/Features";
 import { GraphicKey } from "@/data/Graphics";
 import { Engine, Shape, Vector } from "excalibur";
 
-export class PlayerActor extends CharacterActor {
+export class EnemyActor extends CharacterActor {
   constructor() {
     super({
       stats: {
-        hp: 100,
+        hp: 20,
       },
       graphicKey: GraphicKey.mannequin,
       collider: Shape.Box(24, 24, undefined, new Vector(0, 8)),
@@ -18,7 +16,6 @@ export class PlayerActor extends CharacterActor {
 
   onInitialize(engine: Engine): void {
     super.onInitialize(engine);
-    this.features[Features.input] = new InputFeature(this, engine);
-    this.behaviors.push(new PlayerMovementBehavior(this));
+    this.behaviors.push(new FollowBehavior(this));
   }
 }

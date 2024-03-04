@@ -1,4 +1,5 @@
 import { Behavior } from "@/actors/behaviors/Behavior";
+import { ExActor } from "@/actors/core/ExtendedActor";
 import { InputFeature } from "@/actors/features/InputFeature";
 import { StateFeature } from "@/actors/features/StateFeature";
 import { StatsFeature } from "@/actors/features/StatsFeature";
@@ -14,24 +15,25 @@ import {
 import { Vector } from "excalibur";
 
 export class PlayerMovementBehavior extends Behavior {
-  constructor() {
+  constructor(actor: ExActor) {
     super({
-      condition: (actor) => {
-        return !actor.isDying && !actor.actionAnimation;
+      actor,
+      condition: () => {
+        return !this.actor.isDying && !this.actor.actionAnimation;
       },
-      callback: (actor) => {
-        const inputManager = actor.getFeature<InputFeature>(Features.input);
-        const stats = actor.getFeature<StatsFeature>(Features.stats);
-        const state = actor.getFeature<StateFeature>(Features.state);
+      callback: () => {
+        const inputManager = this.actor.getFeature<InputFeature>(
+          Features.input
+        );
+        const stats = this.actor.getFeature<StatsFeature>(Features.stats);
+        const state = this.actor.getFeature<StateFeature>(Features.state);
         if (!inputManager || !stats || !state) return;
 
         const { inputs, lastDirection } = inputManager;
 
-        // console.log("Inputs", inputs.directions.right);
-
         var vel = getVel(inputs.directions, lastDirection);
         const moving = vel.x !== 0 || vel.y !== 0;
-        actor.vel = moving ? vel.normalize().scale(stats.speed) : vel;
+        this.actor.vel = moving ? vel.normalize().scale(stats.speed) : vel;
 
         state.action = moving ? Action.running : Action.idle;
         state.direction = getDirection(state.direction, vel);
@@ -51,10 +53,10 @@ const getVel = (
   if (directions[Direction.left] && lastDirection !== Direction.right) {
     vel.addEqual(SPEED_LEFT);
   }
-  if (directions[Direction.down] && lastDirection !== Direction.left) {
+  if (directions[Direction.down] && lastDirection !== Direction.up) {
     vel.addEqual(SPEED_DOWN);
   }
-  if (directions[Direction.right] && lastDirection !== Direction.up) {
+  if (directions[Direction.right] && lastDirection !== Direction.left) {
     vel.addEqual(SPEED_RIGHT);
   }
   return vel;
@@ -66,17 +68,17 @@ const getDirection = (initialDirection: Direction, vel: Vector) => {
     direction = Direction.down_right;
   } else if (vel.x === 1 && vel.y === -1) {
     direction = Direction.up_right;
-  } else if (vel.x === 1) {
-    direction = Direction.right;
   } else if (vel.x === -1 && vel.y === 1) {
     direction = Direction.down_left;
   } else if (vel.x === -1 && vel.y === -1) {
     direction = Direction.up_left;
+  } else if (vel.x === 1) {
+    direction = Direction.right;
   } else if (vel.x === -1) {
     direction = Direction.left;
   } else if (vel.y === -1) {
     direction = Direction.up;
-  } else {
+  } else if (vel.y === 1) {
     direction = Direction.down;
   }
   return direction;

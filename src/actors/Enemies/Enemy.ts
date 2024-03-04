@@ -3,7 +3,7 @@ import { CharacterKeys } from "../../data/characters/Characters";
 import { TAG_ENEMY } from "../../utils/Constants";
 import { Npc } from "../Npc";
 import { deathBehaviour } from "../behaviors/DeathBehaviour";
-import { followBehaviour } from "../behaviors/FollowBehaviour";
+import { followBehavior } from "../behaviors/FollowBehavior";
 import { skillsBehaviour } from "../behaviors/SkillsBehaviour";
 import { HealthBar } from "../ui/HealhBar";
 
@@ -38,7 +38,7 @@ export class Enemy extends Npc {
     this.addTag(TAG_ENEMY);
 
     this.behaviours.push(deathBehaviour());
-    this.behaviours.push(followBehaviour());
+    this.behaviours.push(followBehavior());
     this.behaviours.push(skillsBehaviour());
 
     const healthbar = new HealthBar(this.hp);

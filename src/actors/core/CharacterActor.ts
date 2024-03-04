@@ -12,10 +12,8 @@ interface CharacterArgs extends BaseActorProps {
 export class CharacterActor extends BaseActor {
   stats: Stats;
 
-  constructor({ stats, graphicKey }: CharacterArgs) {
-    super({
-      graphicKey,
-    });
+  constructor({ stats, ...rest }: CharacterArgs) {
+    super(rest);
 
     this.stats = stats;
   }
