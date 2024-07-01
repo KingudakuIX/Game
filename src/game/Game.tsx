@@ -36,14 +36,16 @@ export const SetupGameCanvas = () => {
       width: 600,
       height: 400,
     },
-    antialiasing: false,
     enableCanvasTransparency: true,
     maxFps: 60,
+    pixelArt: true,
   });
 
   game.onPreUpdate = onPreUpdate;
 
   state.instance = game;
+
+  // state.pathfinding = new es.js();
 
   // Show FPS and profiler
   // game.debug.showFPS();
@@ -53,13 +55,13 @@ export const SetupGameCanvas = () => {
 };
 
 const onPreUpdate = (engine: Engine, delta: number) => {
-  state.dynamicEntities.forEach((entity) => {
-    // @ts-ignore
-    if (!entity.isDying) {
-      entity.z = entity.pos.y + 10000;
-    } else {
-      entity.z = 1;
-    }
-  });
+  // state.dynamicEntities.forEach((entity) => {
+  //   // @ts-ignore
+  //   if (!entity.isDying) {
+  //     entity.z = entity.pos.y + 10000;
+  //   } else {
+  //     entity.z = 1;
+  //   }
+  // });
   // engine.currentScene.world.queryManager.getQuery([TAG_PLAYER]);
 };

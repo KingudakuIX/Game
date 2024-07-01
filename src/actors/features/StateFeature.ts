@@ -1,8 +1,9 @@
 import { ExActor } from "@/actors/core/ExtendedActor";
 import { Feature } from "@/actors/features/Feature";
 import { Features } from "@/data/Features";
+import { state } from "@/game/Game";
 import { Action, Direction } from "@/utils/Common";
-import { Timer } from "excalibur";
+import { Timer, coroutine } from "excalibur";
 
 export interface State {
   action: Action;
@@ -21,6 +22,8 @@ export class StateFeature extends Feature {
   directionClock: Timer | null = null;
   isDead: boolean = false;
   isBusy: boolean = false; // Used to stop the actor from doing certain actions.
+  directionPromise: Promise<any> | null = null;
+  actionPromise: Promise<any> | null = null;
   // clock: StandardClock;
   constructor(actor: ExActor, state: State) {
     super({
@@ -36,25 +39,27 @@ export class StateFeature extends Feature {
     // this.clock.start();
   }
   async setAction(action: Action) {
-    // if (action === this.queueAction) return;
-    // this.queueAction = action;
-    this.action = action;
-    // await this.actor.actions.delay(300).toPromise();
-    // this.action = this.queueAction;
-    // this.clock.schedule(() => {
-    //   this.action = this.queueAction!;
-    // }, 300);
+    if (this.actionPromise) {
+      return;
+    }
+    var feature = this;
+    var _action = action;
+    this.actionPromise = coroutine(state.instance!, function* () {
+      yield 100;
+      feature.action = _action;
+      feature.actionPromise = null;
+    });
   }
   async setDirection(direction: Direction) {
-    // if (direction === this.queueDirection) return;
-    // this.queueDirection = direction;
-    this.direction = direction;
-    // console.log("queueDirection", direction);
-    // await this.actor.actions.delay(300).toPromise();
-    // this.direction = this.queueDirection;
-    // this.clock.schedule(() => {
-    //   console.log("schedule - queueDirection", this.queueDirection);
-    //   this.direction = this.queueDirection!;
-    // }, 300);
+    if (this.directionPromise) {
+      return;
+    }
+    var feature = this;
+    var _direction = direction;
+    this.directionPromise = coroutine(state.instance!, function* () {
+      yield 100;
+      feature.direction = _direction;
+      feature.directionPromise = null;
+    });
   }
 }

@@ -20,6 +20,7 @@ export class ExtendedScene extends Scene {
   onInitialize(engine: Engine): void {
     // Set initial camera position and set it to follow the player:
     engine.currentScene.camera.pos = this.cameraPos;
-    engine.currentScene.camera.strategy.elasticToActor(this.player, 0.05, 0.4);
+    // engine.currentScene.camera.strategy.elasticToActor(this.player, 0.05, 0.4);
+    engine.currentScene.camera.strategy.lockToActor(this.player);
   }
 }

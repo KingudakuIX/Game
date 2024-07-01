@@ -1,4 +1,4 @@
-import { Vector } from "excalibur";
+import { CollisionGroupManager, Vector } from "excalibur";
 
 export const SCALE = 1;
 export const SCALE_VEC = new Vector(SCALE, SCALE);
@@ -30,3 +30,6 @@ export const DEBUG = true;
 export const DYING = "dying";
 export const MELEE_ATTACK = "melee_attack";
 export const CAST_ATTACK = "melee_attack";
+
+export const WALLS = CollisionGroupManager.create("walls");
+export const PITS = CollisionGroupManager.create("pits");

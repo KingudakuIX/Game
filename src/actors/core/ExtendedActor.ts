@@ -1,10 +1,15 @@
 import { Behavior } from "@/actors/behaviors/Behavior";
 import { Feature } from "@/actors/features/Feature";
-import { Actor, ActorArgs, Engine } from "excalibur";
+import { Actor, ActorArgs, Collider, Engine } from "excalibur";
+
+export interface ExtendedActorArgs extends ActorArgs {
+  collisionObject?: Collider;
+}
 
 export interface ExActor extends Actor {
-  behaviors: Behavior[];
+  behaviors: { [key: string]: Behavior };
   features: { [key: string]: Feature };
+  getBehavior: <T>(behaviors: string) => T | undefined;
   getFeature: <T>(feature: string) => T | undefined;
   [key: string]: any;
 }
@@ -13,11 +18,14 @@ export interface ExActor extends Actor {
  * @description Class which every objects extends from, it handles all features and behaviors
  */
 export class ExtendedActor extends Actor {
-  behaviors: Behavior[] = [];
+  collisionObject: Collider | undefined;
+  behaviors: { [key: string]: Behavior } = {};
   features: { [key: string]: Feature } = {};
 
-  constructor(args?: ActorArgs) {
+  constructor({ collisionObject, ...args }: ExtendedActorArgs) {
     super(args);
+    this.collisionObject = collisionObject;
+    collisionObject && this.collider.set(collisionObject);
   }
 
   onInitialize(_: Engine): void {}
@@ -28,7 +36,7 @@ export class ExtendedActor extends Actor {
 
   handleBehaviors(engine: Engine, delta: number) {
     // Handle behaviors:
-    this.behaviors.forEach((behavior) => {
+    Object.entries(this.behaviors).forEach(([_, behavior]) => {
       // Check if the condition is met or there is no condition:
       if (!behavior.condition || behavior.condition()) {
         // Enter behavior:
@@ -40,6 +48,10 @@ export class ExtendedActor extends Actor {
         behavior.exitCallback(delta);
       }
     });
+  }
+
+  getBehavior<T>(behavior: string) {
+    return this.behaviors[behavior] as T | undefined;
   }
 
   getFeature<T>(feature: string) {

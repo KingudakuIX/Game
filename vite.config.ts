@@ -8,5 +8,6 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   resolve: {
     alias: [{ find: "@", replacement: "/src" }],
-  }
+  },
+  assetsInclude: ["**/*.tmx", "**/*.tmj", "**/*.tsj"],
 });

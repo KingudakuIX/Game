@@ -1,14 +1,15 @@
 import { DrawIndexBehavior } from "@/actors/behaviors/DrawIndexBehavior";
 import { DrawOnScreenBehavior } from "@/actors/behaviors/DrawOnScreenBehavior";
-import { ExtendedActor } from "@/actors/core/ExtendedActor";
+import { ExtendedActor, ExtendedActorArgs } from "@/actors/core/ExtendedActor";
 import { DebugFeature } from "@/actors/features/DebugFeature";
 import { StateFeature } from "@/actors/features/StateFeature";
+import { Behaviors } from "@/data/Behaviors";
 import { Features } from "@/data/Features";
 import { GraphicKey, graphicMap } from "@/data/Graphics";
 import { Action, AnimationData, Direction } from "@/utils/Common";
-import { ActorArgs, Engine, Graphic } from "excalibur";
+import { CollisionType, Engine, Graphic } from "excalibur";
 
-export interface BaseActorProps extends ActorArgs {
+export interface BaseActorProps extends ExtendedActorArgs {
   graphicKey: GraphicKey;
 }
 
@@ -19,14 +20,14 @@ export class BaseActor extends ExtendedActor {
   animations: AnimationData;
 
   constructor({ graphicKey, ...rest }: BaseActorProps) {
-    super(rest);
+    super({ ...rest, collisionType: CollisionType.Active });
     this.animations = graphicMap.get(graphicKey);
   }
 
   onInitialize(engine: Engine): void {
     super.onInitialize(engine);
-    this.behaviors.push(new DrawIndexBehavior(this));
-    this.behaviors.push(new DrawOnScreenBehavior(this));
+    this.behaviors[Behaviors.drawIndex] = new DrawIndexBehavior(this);
+    this.behaviors[Behaviors.drawOnScreen] = new DrawOnScreenBehavior(this);
 
     this.features[Features.debug] = new DebugFeature(this, engine);
     this.features[Features.state] = new StateFeature(this, {

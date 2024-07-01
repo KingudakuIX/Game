@@ -1,7 +1,8 @@
 import { ExActor } from "@/actors/core/ExtendedActor";
 import { Feature } from "@/actors/features/Feature";
+import { createCollision } from "@/actors/misc/Collision";
 import { Features } from "@/data/Features";
-import { Actor, Color, Engine } from "excalibur";
+import { Actor, Engine, Vector } from "excalibur";
 
 export class DebugFeature extends Feature {
   collision: Actor | undefined;
@@ -10,13 +11,18 @@ export class DebugFeature extends Feature {
       key: Features.debug,
       actor,
     });
-
     engine.on("debug_collision", (enable) => {
       if (enable) {
-        const collision = new Actor({
-          width: actor.width,
-          height: actor.height,
-          color: Color.Red,
+        console.log("this.actor", this.actor);
+        // const collision =  new Actor({
+        //   width: actor.width,
+        //   height: actor.height,
+        //   radius: this.actor.collisionObject.radius,
+        //   color: Color.Red,
+        // });
+        const collision = createCollision({
+          offset: new Vector(0, 0),
+          radius: this.actor.collisionObject.radius,
         });
         collision.graphics.opacity = 0.5;
         actor.addChild(collision);

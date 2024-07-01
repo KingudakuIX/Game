@@ -1,13 +1,17 @@
 import { Behavior } from "@/actors/behaviors/Behavior";
+import { TrailBehavior } from "@/actors/behaviors/TrailBehavior";
 import { ExActor } from "@/actors/core/ExtendedActor";
 import { StateFeature } from "@/actors/features/StateFeature";
 import { StatsFeature } from "@/actors/features/StatsFeature";
+import { Behaviors } from "@/data/Behaviors";
 import { Features } from "@/data/Features";
 import { Action, Direction, Round } from "@/utils/Common";
+import { Engine, Ray } from "excalibur";
 
 export class FollowBehavior extends Behavior {
   target: ExActor | null = null;
-  constructor(actor: ExActor) {
+  engine: Engine;
+  constructor(actor: ExActor, engine: Engine) {
     super({
       actor,
       condition: () => {
@@ -39,6 +43,8 @@ export class FollowBehavior extends Behavior {
       console.log("setTarget", target);
       this.target = target as ExActor | null;
     });
+
+    this.engine = engine;
   }
 
   followTarget = () => {
@@ -46,8 +52,34 @@ export class FollowBehavior extends Behavior {
     const state = this.actor.getFeature<StateFeature>(Features.state);
     const stats = this.actor.getFeature<StatsFeature>(Features.stats);
     if (!state || !stats) return;
+
+    var dest = this.target.pos;
+
+    var ray = new Ray(this.actor.pos, this.target.pos);
+    var hits = this.engine.currentScene.physics.rayCast(ray);
+    if (hits.length > 0) {
+      const trailBehavior = this.target.getBehavior<TrailBehavior>(
+        Behaviors.trail
+      );
+      if (trailBehavior && trailBehavior.points.length > 0) {
+        // console.log("Enter here???", trailBehavior.points);
+        for (var index = trailBehavior.points.length - 1; index >= 0; index--) {
+          const point = trailBehavior.points[index];
+          var ray = new Ray(this.actor.pos, point);
+          var hits = this.engine.currentScene.physics.rayCast(ray);
+          // console.log("hits", hits);
+          if (hits.length === 0) {
+            // console.log("Search point found ");
+            dest = point;
+            break;
+          }
+        }
+      }
+    }
+    // console.log("hits", hits);
+
+    // const trail =
     // Move towards the target point if far enough away
-    const dest = this.target.pos;
     const distance = Math.round(dest.distance(this.actor.pos));
     if (distance > 60) {
       const direction = this.target.pos.sub(this.actor.pos).normalize();
